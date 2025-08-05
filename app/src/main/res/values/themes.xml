@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Zenpath" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Your normal theme -->
+        <item name="android:windowBackground">@color/white</item> <!-- Optional -->
+    </style>
+
+    <!-- Splash Theme -->
+    <style name="Theme.Zenpath.Splash" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background
+        </item> <!-- Or @color/your_color -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Zenpath" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+</resources>

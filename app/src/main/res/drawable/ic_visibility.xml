@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Outer eye shape -->
+    <path
+        android:pathData="M2.0,12.0C3.73,7.61 7.61,4.5 12.0,4.5C16.39,4.5 20.27,7.61 22.0,12.0C20.27,16.39 16.39,19.5 12.0,19.5C7.61,19.5 3.73,16.39 2.0,12.0Z"
+        android:strokeColor="#C2D2CF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+
+    <!-- Inner eye (iris/pupil) -->
+    <path
+        android:pathData="M12.0,15.0C13.66,15.0 15.0,13.66 15.0,12.0C15.0,10.34 13.66,9.0 12.0,9.0C10.34,9.0 9.0,10.34 9.0,12.0C9.0,13.66 10.34,15.0 12.0,15.0Z"
+        android:strokeColor="#C2D2CF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+</vector>
