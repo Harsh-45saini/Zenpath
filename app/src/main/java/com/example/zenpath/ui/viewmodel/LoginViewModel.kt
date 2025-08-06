@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.zenpath.data.local.PrefManager
 import com.example.zenpath.data.model.LoginRequest
 import com.example.zenpath.data.model.LoginResponse
 import com.example.zenpath.data.repository.AuthRepository
@@ -28,8 +27,8 @@ class LoginViewModel(
     var loginStatus = mutableStateOf("")
         private set
 
-    var isLoginSuccessful = mutableStateOf(false)
-        private set
+    private val _isLoginSuccessful = MutableStateFlow(false)
+    val isLoginSuccessful: StateFlow<Boolean> = _isLoginSuccessful
 
     fun onUsernameChanged(newVal: String) {
         _username.value = newVal
@@ -44,7 +43,7 @@ class LoginViewModel(
     }
 
     fun loginUser(context: Context) {
-        val request = LoginRequest(email = username.value, password = password.value)
+        val request = LoginRequest(email = username.value.trim(), password = password.value.trim())
         Log.d("LoginAPI", "Sending login request: $request")
 
         val call = repository.loginUser(request)
@@ -55,24 +54,26 @@ class LoginViewModel(
 
                 if (response.isSuccessful && response.body()?.status == true) {
                     val token = response.body()?.data?.token ?: ""
-                    val userName = response.body()?.data?.user?.name ?: ""
+                    val user = response.body()?.data?.user
+                    val userName = user?.name ?: ""
+                    val userEmail = user?.email ?: ""
 
                     loginStatus.value = "Login Success: $token"
-                    isLoginSuccessful.value = true
+                    _isLoginSuccessful.value = true
                     Log.d("LoginViewModel", "Loaded full name: $userName")
-                    UserSessionUtil.saveUserSession(context, token, userName)
+                    UserSessionUtil.saveUserSession(context, token, userName, userEmail)
 
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val message = response.body()?.message ?: errorBody ?: "Unknown error"
                     loginStatus.value = "Login Failed: $message"
-                    isLoginSuccessful.value = false
+                    _isLoginSuccessful.value = false
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 loginStatus.value = "Login Error: ${t.message}"
-                isLoginSuccessful.value = false
+                _isLoginSuccessful.value = false
                 Log.e("LoginAPI", "Failure: ${t.message}", t)
             }
         })

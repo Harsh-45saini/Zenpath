@@ -45,7 +45,7 @@ import androidx.navigation.compose.rememberNavController
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Settings(navController: NavHostController) {
+fun SettingScreen(navController: NavHostController) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
@@ -67,6 +67,7 @@ fun Settings(navController: NavHostController) {
 
     Box(
         modifier = Modifier
+            .background(Color.White)
             .fillMaxSize()
             .padding(horizontal = 18.dp, vertical = 40.dp) // Matches ProfileScreen
     ) {
@@ -1002,7 +1003,7 @@ fun ProfileRowItem(
 @Composable
 fun SettingsPreview() {
     val navController = rememberNavController()
-    Settings(navController = navController)
+    SettingScreen(navController = navController)
 }
 
 @Preview(showBackground = true)

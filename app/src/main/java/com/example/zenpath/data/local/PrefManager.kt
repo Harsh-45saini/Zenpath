@@ -2,6 +2,7 @@ package com.example.zenpath.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 
 class PrefManager(context: Context) {
     private val pref: SharedPreferences
@@ -13,6 +14,18 @@ class PrefManager(context: Context) {
         editor.apply()
     }
 
+    fun getUserName(): String {
+        val name = getPrefValue(UserName) ?: ""
+        Log.d("PrefManager", "Retrieved name: $name")
+        return name
+    }
+
+    fun getUserEmail(): String {
+        val email = getPrefValue(UserEmail) ?: ""
+        Log.d("PrefManager", "Retrieved email: $email")
+        return email
+    }
+
     fun deletePrefData() {
         editor.clear()
         editor.commit()
@@ -20,7 +33,9 @@ class PrefManager(context: Context) {
     }
 
     fun getToken(): String {
-        return getPrefValue("auth_token") ?: ""
+        val token = getPrefValue(HashToken) ?: ""
+        Log.d("PrefManager", "Retrieved token: $token")
+        return token
     }
 
     fun getPrefValue(key: String?): String? {
@@ -40,7 +55,7 @@ class PrefManager(context: Context) {
 
     fun savePrefValue(key: String, value: String?) {
         editor.putString(key, value)
-        editor.commit()
+//        editor.commit()
         editor.apply()
     }
 
@@ -48,6 +63,7 @@ class PrefManager(context: Context) {
 
         var CustomerID = "customer_id"
         const val UserName = "user_name"
+        const val UserEmail = "user_email"
         var CustomerLastName = "customer_last_name"
         var CustomerMobileNumber = "customer_mobilenumber"
         var CustomerEmail = "customer_email"

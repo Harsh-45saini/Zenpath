@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.ui.theme.ZenpathTheme
+import com.example.zenpath.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(onNavigateToOther: () -> Unit,
@@ -35,6 +36,7 @@ fun ProfileScreen(onNavigateToOther: () -> Unit,
     val protestStrike = FontFamily(
         Font(R.font.protest_strike, FontWeight.Light),
     )
+
     Column(
         modifier = Modifier
             .fillMaxSize()

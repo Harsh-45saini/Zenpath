@@ -126,8 +126,8 @@ fun PasswordField(password: String, onPasswordChanged: (String) -> Unit) {
             )
         },
         trailingIcon = {
-            val image = if (passwordVisible) painterResource(id = R.drawable.ic_visibility_off)
-            else painterResource(id = R.drawable.ic_visibility)
+            val image = if (passwordVisible) painterResource(id = R.drawable.ic_visibility)
+            else painterResource(id = R.drawable.ic_visibility_off)
             val description = if (passwordVisible) "Hide password" else "Show password"
 
             IconButton(onClick = { passwordVisible = !passwordVisible }) {

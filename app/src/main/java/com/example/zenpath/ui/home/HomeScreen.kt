@@ -1,7 +1,9 @@
 package com.example.zenpath.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import coil.compose.AsyncImage
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.toArgb
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.request.ImageRequest
 import com.airbnb.lottie.LottieProperty
 import kotlinx.coroutines.launch
 import com.example.zenpath.R
@@ -45,6 +48,7 @@ import com.example.zenpath.ui.theme.ZenpathTheme
 import com.example.zenpath.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.delay
 import com.example.zenpath.data.model.Category
+import com.example.zenpath.data.model.Practice
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +63,7 @@ fun HomeScreen(
     val ptSansFont = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
     val categories by viewModel.categories.collectAsState()
-    val token = prefManager.getToken()
+//    val token = prefManager.getToken()
     val dashboardData by viewModel.dashboardData.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -73,7 +77,6 @@ fun HomeScreen(
         delay(300)
         viewModel.loadFirstName(prefManager)
         viewModel.loadDashboard(prefManager)
-        viewModel.loadCategories(token)
     }
 
     if (!isConnected) {
@@ -109,10 +112,14 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Box(modifier = Modifier.height(100.dp)) {
-                FourDiffBox(categories = categories)
+                if (categories.isNotEmpty()) {
+                    FourDiffBox(categories = categories)
+                } else {
+                    Text("Loading...")
+                }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             Row(
                 modifier = Modifier
@@ -140,7 +147,10 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            InfoCard()
+            dashboardData?.latestPractice?.let { practice ->
+                InfoCard(practice = practice)
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
             TwoColumnLayout(viewModel = viewModel)
         }
@@ -180,17 +190,19 @@ fun LottieLoader(
 
 @Composable
 fun TwoColumnLayout(viewModel: HomeViewModel) {
-    val ptSerifFont = FontFamily(
-        Font(R.font.ptserif_regular, FontWeight.Normal)
-    )
-    val ptSansFont = FontFamily(
-        Font(R.font.ptsans_regular, FontWeight.Normal)
-    )
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        // Left Column
+    val dashboardData by viewModel.dashboardData.collectAsState()
+    val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
+    val ptSansFont = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
+
+    val topPractices = dashboardData?.topPractices.orEmpty()
+
+    // Fallback if less than 2 practices are available
+    val practice1 = topPractices.getOrNull(0)
+    val practice2 = topPractices.getOrNull(1)
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+
+        // ---------- LEFT COLUMN ----------
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -198,7 +210,6 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
         ) {
             Text(
                 text = "Most",
-                style = MaterialTheme.typography.titleMedium,
                 fontSize = 28.sp,
                 fontFamily = ptSerifFont,
                 fontWeight = FontWeight.Bold,
@@ -207,7 +218,6 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
 
             Text(
                 text = "Popular",
-                style = MaterialTheme.typography.titleMedium,
                 fontSize = 28.sp,
                 fontFamily = ptSerifFont,
                 fontWeight = FontWeight.Bold,
@@ -216,91 +226,87 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Box(
-                modifier = Modifier
-                    .height(180.dp)
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-                    .clip(RoundedCornerShape(22.dp)) // optional rounded corners
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image1),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop, // Crop to fill entire box
-                    modifier = Modifier.matchParentSize()
-                )
-
-                Image(
-                    painter = painterResource(id = R.drawable.play_icon), // Your custom play icon
-                    contentDescription = "Play Button",
+            practice1?.let {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(10.dp)
-                )
-
-                // Text at the bottom
-                Text(
-                    text = "Midnight and \n" +
-                            "relaxation",
-                    color = Color.White,
-                    fontFamily = ptSerifFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
+                        .height(180.dp)
                         .fillMaxWidth()
-                        .padding(14.dp)
-                )
-            }
+                        .padding(top = 10.dp)
+                        .clip(RoundedCornerShape(22.dp))
+                ) {
+                    AsyncImage(
+                        model = ApiClient.BASE_URL + it.coverImage,
+                        contentDescription = it.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.matchParentSize()
+                    )
 
+                    Image(
+                        painter = painterResource(id = R.drawable.play_icon),
+                        contentDescription = "Play",
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(10.dp)
+                    )
+
+                    Text(
+                        text = it.title,
+                        color = Color.White,
+                        fontFamily = ptSerifFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .padding(14.dp)
+                    )
+                }
+            }
         }
 
-        // Right Column
+        // ---------- RIGHT COLUMN ----------
         Column(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp, top = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .height(180.dp)
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-                    .clip(RoundedCornerShape(22.dp))
-            ) {
-                // Background image
-                Image(
-                    painter = painterResource(id = R.drawable.image2),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.matchParentSize()
-                )
-
-                // Custom Play Button at top-left
-                Image(
-                    painter = painterResource(id = R.drawable.play_icon), // Your custom play icon
-                    contentDescription = "Play Button",
+            practice2?.let {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(10.dp)
-                )
-
-                // Text at the bottom
-                Text(
-                    text = "Jogging and \n" +
-                            "cycling",
-                    color = Color.White,
-                    fontFamily = ptSerifFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
+                        .height(180.dp)
                         .fillMaxWidth()
-                        .padding(14.dp)
-                )
-            }
+                        .padding(top = 10.dp)
+                        .clip(RoundedCornerShape(22.dp))
+                ) {
+                    AsyncImage(
+                        model = ApiClient.BASE_URL + it.coverImage,
+                        contentDescription = it.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.matchParentSize()
+                    )
 
+                    Image(
+                        painter = painterResource(id = R.drawable.play_icon),
+                        contentDescription = "Play",
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(10.dp)
+                    )
+
+                    Text(
+                        text = it.title,
+                        color = Color.White,
+                        fontFamily = ptSerifFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .padding(14.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -308,7 +314,7 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
                 onClick = { viewModel.onExploreMoreClicked() },
                 shape = RoundedCornerShape(18.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-                modifier = Modifier.fillMaxWidth() // full width only
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = "Explore More",
@@ -316,7 +322,7 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
                     fontWeight = FontWeight.Bold,
                     fontFamily = ptSansFont,
                     color = Color.White,
-                    modifier = Modifier.padding(vertical = 10.dp) // 👈 adjusts vertical space
+                    modifier = Modifier.padding(vertical = 10.dp)
                 )
             }
         }
@@ -324,28 +330,29 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun InfoCard() {
+fun InfoCard(practice: Practice) {
     val ptSerifFont = FontFamily(
         Font(R.font.ptserif_regular, FontWeight.Normal)
     )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .background(colorResource(id = R.color.light_blue)) // Light Blue
+            .background(colorResource(id = R.color.light_blue))
             .padding(20.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left Column: 60% width
+            // Left Column: 60%
             Column(
                 modifier = Modifier
-                    .weight(0.6f) // 60%
+                    .weight(0.6f)
             ) {
                 Text(
-                    text = "Focused & \nMindfulness",
+                    text = practice.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 22.sp,
                     fontFamily = ptSerifFont,
@@ -356,7 +363,7 @@ fun InfoCard() {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "involves focusing on something intently as a way of staying.",
+                    text = practice.description,
                     style = MaterialTheme.typography.bodyMedium,
                     fontSize = 12.sp,
                     color = colorResource(id = R.color.blue),
@@ -367,7 +374,7 @@ fun InfoCard() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
-                    onClick = { /* Action here */ },
+                    onClick = { /* Action */ },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
                 ) {
@@ -389,13 +396,17 @@ fun InfoCard() {
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Right Column: 40% width
-            Image(
-                painter = painterResource(id = R.drawable.illustration),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(ApiClient.BASE_URL + practice.coverImage)
+                    .crossfade(true)
+                    .error(R.drawable.group)
+                    .build(),
                 contentDescription = "Zen Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .weight(0.4f) // 40%
-                    .aspectRatio(1f) // Maintain square shape (optional)
+                    .weight(0.4f)
+                    .aspectRatio(1f)
                     .clip(RoundedCornerShape(8.dp))
             )
         }
@@ -505,6 +516,8 @@ fun FourDiffBox(categories: List<Category>) {
         Font(R.font.ptsans_regular, FontWeight.Normal)
     )
 
+    Log.d("FourDiffBox", "Received categories: ${categories.size}")
+
     val displayedCategories = categories.take(4)
 
     Row(
@@ -526,7 +539,13 @@ fun FourDiffBox(categories: List<Category>) {
                     contentAlignment = Alignment.Center
                 )   {
                     Image(
-                        painter = rememberAsyncImagePainter(ApiClient.BASE_URL + category.icon),
+                        painter = rememberAsyncImagePainter(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(ApiClient.BASE_URL + category.icon)
+                                .crossfade(true)
+                                .error(R.drawable.group) // 🔁 fallback when loading fails (e.g., no internet)
+                                .build()
+                        ),
                         contentDescription = category.name,
                         modifier = Modifier.size(40.dp)
                             .background(Color.Gray),
