@@ -93,7 +93,7 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 25.dp, vertical = 40.dp)
         ) {
-            TopProfileBar(userName)
+            TopProfileBar(userName,navController = navController)
 
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -403,7 +403,7 @@ fun InfoCard() {
 }
 
 @Composable
-fun TopProfileBar(userName: String?) {
+fun TopProfileBar(userName: String? , navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -419,6 +419,9 @@ fun TopProfileBar(userName: String?) {
                 modifier = Modifier
                     .size(50.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        navController.navigate("profile_screen")
+                    }
                     .background(colorResource(id = R.color.light_blue))
             ) {
                 Image(

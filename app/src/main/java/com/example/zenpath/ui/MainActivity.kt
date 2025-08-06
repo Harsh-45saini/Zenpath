@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.ui.home.HomeScreen
 import com.example.zenpath.ui.mostpopular.MostPopularScreen
+import com.example.zenpath.ui.profile.ProfileScreen
+import com.example.zenpath.ui.settings.PrivacyPolicyScreen
 import com.example.zenpath.utils.BaseActivity
 import com.example.zenpath.ui.theme.ZenpathTheme
 
@@ -24,6 +26,15 @@ class MainActivity : BaseActivity() {
                     composable("login") { AuthScreen(navController) }
                     composable("home") { HomeScreen(navController) }
                     composable("most_popular") { MostPopularScreen() }
+                    composable("privacy_policy") {
+                        PrivacyPolicyScreen(navController = navController)
+                    }
+                    composable("profile_screen") {
+                        ProfileScreen(
+                            onNavigateToOther = {},
+                            navController = navController
+                        )
+                    }
                 }
             }
         }
