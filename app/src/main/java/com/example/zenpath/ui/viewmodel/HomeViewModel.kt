@@ -43,32 +43,26 @@ class HomeViewModel(
         observeNetwork()
     }
 
-    fun loadCategories(token: String) {
-        repository.getDashboardData(token).enqueue(object : Callback<DashboardResponse> {
-            override fun onResponse(call: Call<DashboardResponse>, response: Response<DashboardResponse>) {
-                if (response.isSuccessful) {
-                    val categories = response.body()?.data?.latestCategories ?: emptyList()
-                    _categories.value = categories
-                }
-            }
-
-            override fun onFailure(call: Call<DashboardResponse>, t: Throwable) {
-                Log.e("HomeViewModel", "Error fetching categories", t)
-            }
-        })
-    }
-
     fun loadDashboard(prefManager: PrefManager) {
         val token = prefManager.getToken()
+        Log.d("loadDashboard", "Token used: $token") // ✅ Debug log
+
         repository.getDashboardData(token).enqueue(object : Callback<DashboardResponse> {
             override fun onResponse(call: Call<DashboardResponse>, response: Response<DashboardResponse>) {
                 if (response.isSuccessful) {
                     _dashboardData.value = response.body()?.data
+
+                    // ✅ Set categories here as well
+                    val categories = response.body()?.data?.latestCategories ?: emptyList()
+                    _categories.value = categories
+                    Log.d("loadDashboard", "Dashboard and ${categories.size} categories loaded")
+                } else {
+                    Log.e("loadDashboard", "API error: ${response.code()} - ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<DashboardResponse>, t: Throwable) {
-                Log.e("HomeViewModel", "Error fetching dashboard", t)
+                Log.e("loadDashboard", "Error fetching dashboard", t)
             }
         })
     }

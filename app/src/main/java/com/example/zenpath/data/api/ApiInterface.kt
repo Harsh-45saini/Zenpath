@@ -12,10 +12,10 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ApiInterface {
-    @POST("/users/register")
+    @POST("/api/users/register")
     fun registerUser(@Body request: RegisterRequest): Call<RegisterResponse>
 
-    @POST("/users/login")
+    @POST("/api/users/login")
     fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
 
     @GET("/api/dashboard")

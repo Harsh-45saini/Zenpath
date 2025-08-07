@@ -74,13 +74,15 @@ class RegisterViewModel(
                     ) {
                         if (response.isSuccessful && response.body()?.status == true) {
                             val token = response.body()?.data?.token ?: ""
-                            val userName = response.body()?.data?.user?.name ?: ""
+                            val user = response.body()?.data?.user
+                            val userName = user?.name ?: ""
+                            val userEmail = user?.email ?: ""
 
                             registerStatus.value = "Register Success"
                             isRegisterSuccessful.value = true
                             Log.d("RegisterViewModel", "Loaded full name: $userName")
 
-                            UserSessionUtil.saveUserSession(context, token, userName)
+                            UserSessionUtil.saveUserSession(context, token, userName, userEmail)
 
                             Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
                         } else {

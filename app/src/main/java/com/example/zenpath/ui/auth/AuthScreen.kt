@@ -171,7 +171,7 @@ fun LoginForm(viewModel: LoginViewModel, navController: NavHostController) {
 
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
-    val loginSuccess by viewModel.isLoginSuccessful
+    val loginSuccess by viewModel.isLoginSuccessful.collectAsState()
 
     Column {
         EmailTextField(value = username, onValueChange = viewModel::onUsernameChanged)

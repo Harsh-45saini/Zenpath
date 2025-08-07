@@ -5,12 +5,13 @@ import android.util.Log
 import com.example.zenpath.data.local.PrefManager
 
 object UserSessionUtil {
-    fun saveUserSession(context: Context, token: String, userName: String) {
+    fun saveUserSession(context: Context, token: String, userName: String , userEmail : String) {
         val prefManager = PrefManager(context)
         Log.d("UserSessionUtil", "Saving token: $token")
         Log.d("UserSessionUtil", "Saving userName: $userName")
         prefManager.savePrefValue(PrefManager.HashToken, token)
         prefManager.savePrefValue(PrefManager.UserName, userName)
+        prefManager.savePrefValue(PrefManager.UserEmail, userEmail)
         prefManager.createLoginSession()
     }
 }
