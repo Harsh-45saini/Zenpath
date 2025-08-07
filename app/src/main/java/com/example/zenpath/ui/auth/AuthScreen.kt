@@ -21,8 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.data.repository.AuthRepository
 import com.example.zenpath.ui.auth.EmailTextField
 import com.example.zenpath.ui.viewmodel.LoginViewModel
@@ -228,6 +230,7 @@ fun RegisterForm(viewModel: RegisterViewModel, navController: NavHostController)
 
     Column {
         NameTextField(value = fullName, onValueChange = viewModel::onFullNameChanged)
+        Spacer(modifier = Modifier.height(12.dp))
         EmailTextField(value = email, onValueChange = viewModel::onEmailChanged)
         PasswordField(password = password, onPasswordChanged = viewModel::onPasswordChanged)
 
@@ -242,7 +245,7 @@ fun RegisterForm(viewModel: RegisterViewModel, navController: NavHostController)
                 borderColor = colorResource(id = R.color.blue),
                 checkedColor = colorResource(id = R.color.blue),
             )
-            Text("I accepted ", fontSize = 14.sp, color = colorResource(id = R.color.blue), fontFamily = ptSans)
+            Text("I accepted ", modifier = Modifier.padding(start = 5.dp),fontSize = 14.sp, color = colorResource(id = R.color.blue), fontFamily = ptSans)
             Text("Terms & Privacy Policy", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = colorResource(id = R.color.blue), fontFamily = ptSans)
         }
 
@@ -275,10 +278,14 @@ fun RegisterForm(viewModel: RegisterViewModel, navController: NavHostController)
     }
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun LoginScreenPreview() {
-//    ZenpathTheme {
-//        LoginScreen(navController = rememberNavController() )
-//    }
-//}
+@Preview(showBackground = true, showSystemUi = true, name = "Auth Screen - Login")
+@Composable
+fun AuthScreenLoginPreview() {
+    AuthScreen(navController = rememberNavController())
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "Auth Screen - Register")
+@Composable
+fun AuthScreenRegisterPreview() {
+    AuthScreen(navController = rememberNavController())
+}
