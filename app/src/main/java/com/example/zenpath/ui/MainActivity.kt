@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.ui.home.HomeScreen
 import com.example.zenpath.ui.mostpopular.MostPopularScreen
 import com.example.zenpath.ui.profile.ProfileScreen
+import com.example.zenpath.ui.search.SearchScreen
 
 import com.example.zenpath.ui.settings.PrivacyPolicyScreen
 import com.example.zenpath.ui.settings.SettingScreen
@@ -40,6 +41,11 @@ class MainActivity : BaseActivity() {
                             navController = navController
                         )
                     }
+
+                    composable("search_screen") {
+                        SearchScreen(navController = navController)
+                    }
+
                 }
             }
         }

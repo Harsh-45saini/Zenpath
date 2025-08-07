@@ -491,6 +491,9 @@ fun TopProfileBar(userName: String? , navController: NavController) {
                 modifier = Modifier
                     .size(45.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        navController.navigate("search_screen")
+                    }
                     .background(colorResource(id = R.color.blue)),
                 contentAlignment = Alignment.Center// dark_green_image22
             ) {

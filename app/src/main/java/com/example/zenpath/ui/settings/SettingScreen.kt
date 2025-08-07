@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
@@ -644,7 +645,7 @@ fun NotificationsSheet(onDismiss: () -> Unit) {
                 toggleState = notificationsEnabled,
                 onToggleChange = { notificationsEnabled = it }
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -657,7 +658,7 @@ fun NotificationsSheet(onDismiss: () -> Unit) {
                 toggleState = darkModeEnabled,
                 onToggleChange = { darkModeEnabled = it }
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -670,7 +671,7 @@ fun NotificationsSheet(onDismiss: () -> Unit) {
                 toggleState = locationEnabled,
                 onToggleChange = { locationEnabled = it }
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -781,7 +782,7 @@ fun DailyReminderSheet(onDismiss: () -> Unit) {
                     // TODO: handle morning add
                 }
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -795,7 +796,7 @@ fun DailyReminderSheet(onDismiss: () -> Unit) {
                     // TODO: handle evening add
                 }
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
