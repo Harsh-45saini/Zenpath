@@ -65,7 +65,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontFamily = FontFamily.Serif,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+
                 )
 
                 Spacer(modifier = Modifier.weight(1f))

@@ -28,7 +28,7 @@ class MainActivity : BaseActivity() {
                     composable("splash") { SplashScreen(navController) }
                     composable("login") { AuthScreen(navController) }
                     composable("home") { HomeScreen(navController) }
-                    composable("most_popular") { MostPopularScreen() }
+                    composable("most_popular") { MostPopularScreen(navController = navController) }
                     composable("privacy_policy") {
                         PrivacyPolicyScreen(navController = navController)
                     }

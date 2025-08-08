@@ -60,7 +60,7 @@ class LoginViewModel(
 
                     loginStatus.value = "Login Success: $token"
                     _isLoginSuccessful.value = true
-                    Log.d("LoginViewModel", "Loaded full name: $userName")
+                    Log.d("LoginViewModel", "Loaded full name: $userName and loaded email : $userEmail")
                     UserSessionUtil.saveUserSession(context, token, userName, userEmail)
 
                 } else {

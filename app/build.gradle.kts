@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.runtime.livedata)
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)

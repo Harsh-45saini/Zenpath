@@ -45,14 +45,13 @@ class HomeViewModel(
 
     fun loadDashboard(prefManager: PrefManager) {
         val token = prefManager.getToken()
-        Log.d("loadDashboard", "Token used: $token") // ✅ Debug log
+        Log.d("loadDashboard", "Token used: $token")
 
         repository.getDashboardData(token).enqueue(object : Callback<DashboardResponse> {
             override fun onResponse(call: Call<DashboardResponse>, response: Response<DashboardResponse>) {
                 if (response.isSuccessful) {
                     _dashboardData.value = response.body()?.data
 
-                    // ✅ Set categories here as well
                     val categories = response.body()?.data?.latestCategories ?: emptyList()
                     _categories.value = categories
                     Log.d("loadDashboard", "Dashboard and ${categories.size} categories loaded")

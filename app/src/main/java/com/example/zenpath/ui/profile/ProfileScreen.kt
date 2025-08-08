@@ -28,14 +28,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.ui.theme.ZenpathTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.getValue
 import com.example.zenpath.ui.viewmodel.ProfileViewModel
+import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 fun ProfileScreen(onNavigateToOther: () -> Unit,
-                  navController: NavHostController) {
+                  navController: NavHostController,
+                  profileViewModel: ProfileViewModel = viewModel() ) {
     val protestStrike = FontFamily(
         Font(R.font.protest_strike, FontWeight.Light),
     )
+
+    val userName by profileViewModel.userFullName.observeAsState("")
+    val userEmail by profileViewModel.userEmail.observeAsState("")
 
     Column(
         modifier = Modifier
@@ -57,7 +64,7 @@ fun ProfileScreen(onNavigateToOther: () -> Unit,
                 )
                 .padding(16.dp)
         ) {
-            RowWithImageAndText()
+            RowWithImageAndText(userName = userName, userEmail = userEmail)
         }
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -80,7 +87,7 @@ fun ProfileScreen(onNavigateToOther: () -> Unit,
             fontSize = 18.sp
         )
 
-        RowWithTextAndImageBoxes(navController)
+        RowWithTextAndImageBoxes()
 
         Spacer(modifier = Modifier.height(15.dp))
 
@@ -107,7 +114,7 @@ fun ProfileScreen(onNavigateToOther: () -> Unit,
 }
 
 @Composable
-fun RowWithTextAndImageBoxes(navController: NavHostController) {
+fun RowWithTextAndImageBoxes() {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -164,7 +171,8 @@ fun RowWithTextAndImageBoxes(navController: NavHostController) {
 }
 
 @Composable
-fun RowWithImageAndText() {
+fun RowWithImageAndText(userName: String,
+                          userEmail: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,13 +203,13 @@ fun RowWithImageAndText() {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Ashiqur Rehman",
+                text = userName,
                 fontSize = 18.sp,
                 color = colorResource(id = R.color.blue),
                 fontFamily = FontFamily.Serif
             )
             Text(
-                text = "ashikxql@gmail.com",
+                text = userEmail,
                 fontSize = 14.sp,
                 color = Color.Gray,
                 fontFamily = FontFamily.SansSerif
@@ -222,6 +230,9 @@ fun RowWithImagesAndCenterText(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .size(48.dp)
+                .clickable {
+                    navController.navigate("home")
+                }
                 .background(
                     color = colorResource(id = R.color.blue), // light blue
                     shape = RoundedCornerShape(12.dp) // rounded corners

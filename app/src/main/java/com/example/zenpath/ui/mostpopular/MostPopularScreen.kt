@@ -3,6 +3,7 @@ package com.example.zenpath.ui.mostpopular
 import androidx.compose.material3.Button
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -25,12 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.R
 import com.example.zenpath.data.model.MusicItem
 import com.example.zenpath.ui.theme.ZenpathTheme
 
 @Composable
-fun MostPopularScreen() {
+fun MostPopularScreen(navController : NavController) {
     val ptSerif = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
     val ptSans = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
 
@@ -70,9 +73,9 @@ fun MostPopularScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.white))
-            .padding(horizontal = 25.dp, vertical = 40.dp)
+            .padding(horizontal = 18.dp, vertical = 40.dp)
     ) {
-        MostPopular()
+        MostPopular(navController)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -81,9 +84,8 @@ fun MostPopularScreen() {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(sampleMusicList) { music ->
                 MusicCard(
@@ -115,7 +117,7 @@ fun MostPopularScreen() {
 }
 
 @Composable
-fun MostPopular() {
+fun MostPopular(navController: NavController) {
     val ptSerifFont = FontFamily(
         Font(R.font.ptserif_regular, FontWeight.Normal)
     )
@@ -134,6 +136,9 @@ fun MostPopular() {
         Box(
             modifier = Modifier
                 .size(45.dp)
+                .clickable {
+                    navController.navigate("home")
+                }
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.light_blue)),
             contentAlignment = Alignment.Center
@@ -159,6 +164,9 @@ fun MostPopular() {
         Box(
             modifier = Modifier
                 .size(45.dp)
+                .clickable {
+                    navController.navigate("search_screen")
+                }
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.light_blue)),
             contentAlignment = Alignment.Center
@@ -221,6 +229,7 @@ fun MusicCard(
 @Composable
 fun MostPopularPreview() {
     ZenpathTheme {
-        MostPopularScreen()
+        val fakeNavController = rememberNavController()
+        MostPopularScreen(navController = fakeNavController)
     }
 }

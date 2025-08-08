@@ -94,7 +94,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(colorResource(id = R.color.white))
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 25.dp, vertical = 40.dp)
+                .padding(horizontal = 18.dp, vertical = 40.dp)
         ) {
             TopProfileBar(userName,navController = navController)
 

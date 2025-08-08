@@ -1,10 +1,10 @@
 package com.example.zenpath.ui.settings
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextField
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -42,6 +43,7 @@ import androidx.compose.ui.zIndex
 import com.example.zenpath.R
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.zenpath.ui.viewmodel.SettingViewModel
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +60,9 @@ fun SettingScreen(navController: NavHostController) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val sheetHeight = screenHeight * 0.75f
     var sheetHeightFraction by remember { mutableStateOf(0.74f) }
+
+    val context = LocalContext.current
+    val settingViewModel = remember { SettingViewModel() }
 
     val shape = RoundedCornerShape(
         topStart = 30.dp,
@@ -161,10 +166,14 @@ fun SettingScreen(navController: NavHostController) {
 
                     if (showDialog) {
                         CustomSignOutDialog(
-                            onDismiss = { showDialog = false },
-                            onConfirm = {
-                                showDialog = false
-                                // TODO: Handle logout logic here
+                            context = context,
+                            settingViewModel = settingViewModel,
+                            onDismiss = { showDialog = false},
+                            onLogoutRedirect = { 
+                                // Navigate to Auth screen here
+                                navController.navigate("login") {
+                                    popUpTo(0) { inclusive = true } // Clear backstack
+                                }
                             }
                         )
                     }
@@ -486,8 +495,10 @@ fun AccountInfoSheet(
 
 @Composable
 fun CustomSignOutDialog(
+    context: Context,
+    settingViewModel: SettingViewModel,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onLogoutRedirect: () -> Unit
 ) {
     val ptRegularSerif = FontFamily(
         Font(R.font.ptserif_regular, FontWeight.Light),
@@ -500,8 +511,7 @@ fun CustomSignOutDialog(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(26.dp))
                 .background(colorResource(id = R.color.blue))
         ) {
             Column(
@@ -511,40 +521,39 @@ fun CustomSignOutDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Top Image
                 Image(
-                    painter = painterResource(id = R.drawable.icon3), // Replace with your logout icon
+                    painter = painterResource(id = R.drawable.icon3),
                     contentDescription = "Logout Icon",
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier.size(74.dp)
                 )
 
-                // Title
                 Text(
                     text = "Logout",
-                    fontSize = 20.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontFamily = ptRegularSerif
                 )
 
-                // Description
                 Text(
-                    text = "Are you really sure that you want to \n" +
-                            "logout now?",
-                    fontSize = 14.sp,
+                    text = "Are you really sure that you want to \nlogout now?",
+                    fontSize = 16.sp,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     fontFamily = ptRegularSans
                 )
 
-                // Confirm Button
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(50.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color.White)
-                        .clickable { onConfirm() },
+                        .clickable {
+                            settingViewModel.logout(context) {
+                                onLogoutRedirect()  // Go to Auth screen
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -555,14 +564,13 @@ fun CustomSignOutDialog(
                     )
                 }
 
-                // Cancel Button
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(50.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .border(
-                            width = 0.25.dp,
+                            width = 0.50.dp,
                             color = Color.Black,
                             shape = RoundedCornerShape(10.dp)
                         )
@@ -760,7 +768,6 @@ fun DailyReminderSheet(onDismiss: () -> Unit) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Description
         Text(
             text = "These medication reminders are all better than\nyour average pillbox. From apps to handheld\ntimers",
             fontSize = 14.sp,
@@ -771,7 +778,6 @@ fun DailyReminderSheet(onDismiss: () -> Unit) {
             color = colorResource(id = R.color.blue)
         )
 
-        // 💊 Reminders List
         Column(
             modifier = Modifier.padding(top = 15.dp, bottom = 10.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
@@ -1007,11 +1013,12 @@ fun SettingsPreview() {
     SettingScreen(navController = navController)
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignOutDialogPreview() {
-    CustomSignOutDialog(
-        onDismiss = { /* Preview dismiss */ },
-        onConfirm = { /* Preview confirm */ }
-    )
-}
+//@Preview(showBackground = true, name = "Light Mode")
+//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
+//@Composable
+//fun SignOutDialogPreview() {
+//    CustomSignOutDialog(
+//        onDismiss = {},
+//        onConfirm = {}
+//    )
+//}

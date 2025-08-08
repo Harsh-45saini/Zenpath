@@ -18,7 +18,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         // Load user info from shared prefs
-        _userFullName.value = prefManager.getUserName() // e.g., "Ashiqur Rehman"
-        _userEmail.value = prefManager.getUserEmail()   // e.g., "ashikxql@gmail.com"
+        _userFullName.value = prefManager.getUserName()
+        _userEmail.value = prefManager.getUserEmail()
     }
 }
