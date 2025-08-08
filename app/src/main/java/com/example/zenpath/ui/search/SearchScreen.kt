@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
@@ -115,7 +111,7 @@ fun SearchScreen(navController: NavController) {
                     Box(
                         modifier = Modifier
                             .size(48.dp)
-                            .offset(y = (-10).dp)
+                            .offset(y = (-6 ).dp)
                             .padding(bottom = 2.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .background(Color(0xFFD0E8FF)),
@@ -139,7 +135,8 @@ fun SearchScreen(navController: NavController) {
                 )
 
                 CustomVerticalList()
-                Spacer(modifier = Modifier.height(36.dp))
+
+                Spacer(modifier = Modifier.height(26.dp))
 
                 CustomRow(navController)
 
@@ -172,8 +169,8 @@ fun ListItem(title: String, subtitle: String) {
         // 1. Image inside a Box
         Box(
             modifier = Modifier
-                .size(55.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .size(65.dp)
+                .clip(RoundedCornerShape(12.dp)) // Clip the whole Box
                 .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
@@ -181,12 +178,10 @@ fun ListItem(title: String, subtitle: String) {
                 painter = painterResource(id = R.drawable.rectangle_9500),
                 contentDescription = "Avatar",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                modifier = Modifier.fillMaxSize() // Fill the entire Box
             )
         }
-
+        
         // 2. Space between Box and Column
         Spacer(modifier = Modifier.width(12.dp))
 
@@ -241,12 +236,12 @@ fun ActionBox(
 @Composable
 fun TwoInfoBoxes() {
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .height(74.dp)
+                .height(80.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .paint(
                     painter = painterResource(id = R.drawable.rectangle_9513), // replace with your image name
@@ -284,7 +279,7 @@ fun TwoInfoBoxes() {
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .height(74.dp)
+                .height(80.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .paint(
                     painter = painterResource(id = R.drawable.rectangle_9523), // replace with your image name
@@ -322,11 +317,10 @@ fun TwoInfoBoxes() {
     }
 }
 
-
 @Composable
 fun FourActionBoxes(navController: NavController) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ActionBox(
             imageRes = R.drawable.leaf,
@@ -353,14 +347,13 @@ fun CustomRow(navController: NavController) {
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 34.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         // First Column
         Column(
-            verticalArrangement = Arrangement.spacedBy(26.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
                 .weight(1f)
         ) {
@@ -380,7 +373,6 @@ fun CustomRow(navController: NavController) {
         FourActionBoxes(navController = navController)
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

@@ -2,7 +2,12 @@ package com.example.zenpath.ui.categories
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,6 +22,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,15 +37,30 @@ fun AllCategoriesScreen(navController: NavController) {
         Font(R.font.protest_strike, FontWeight.Light),
     )
 
+    val categories = listOf(
+        "Category 1" to R.drawable.stress_relief,
+        "Category 2" to R.drawable.sleeping,
+        "Category 3" to R.drawable.disappointed,
+        "Category 4" to R.drawable.relieved,
+        "Category 5" to R.drawable.frowning,
+        "Category 6" to R.drawable.stress_relief,
+        "Category 7" to R.drawable.sleeping,
+        "Category 8" to R.drawable.disappointed,
+        "Category 9" to R.drawable.relieved,
+        "Category 10" to R.drawable.frowning,
+        "Category 11" to R.drawable.stress_relief,
+        "Category 12" to R.drawable.sleeping,
+    )
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 22  .dp, vertical = 40.dp)
+            .padding(horizontal = 22.dp, vertical = 40.dp)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Image(
                 painter = painterResource(id = R.drawable.allcategories_bg),
@@ -50,38 +71,34 @@ fun AllCategoriesScreen(navController: NavController) {
                     .clip(RoundedCornerShape(20.dp))
             )
 
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 8.dp, end = 8.dp) // Apply outer horizontal padding
+                    .padding(horizontal = 12.dp)
             ) {
-                // Row with TextField and Search Icon
+                // Top Row with title & icon
                 Row(
                     modifier = Modifier
                         .padding(top = 8.dp)
-                        .fillMaxWidth(), // This now fills the available width inside the Column
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // TextField Box with weight to occupy all remaining space
-                    // Loading Text
                     Text(
                         text = "Filter by\ncategories",
                         color = Color.Black,
                         fontSize = 22.sp,
                         fontFamily = protestStrike,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier
+                            .padding(top = 16.dp ,start = 10.dp)
                             .weight(1f)
                     )
 
-                    Spacer(modifier = Modifier.width(24.dp)) // spacing between TextField and icon
+                    Spacer(modifier = Modifier.width(24.dp))
 
-                    // Settings Icon
                     Box(
                         modifier = Modifier
                             .size(48.dp)
-                            .offset(y = (-5).dp)
-                            .padding(bottom = 2.dp)
+                            .offset(x = 8.dp, y = (-8).dp)
                             .clip(RoundedCornerShape(12.dp))
                             .background(colorResource(id = R.color.blue)),
                         contentAlignment = Alignment.Center
@@ -93,8 +110,62 @@ fun AllCategoriesScreen(navController: NavController) {
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(40.dp))
+
+                // 12 Boxes in 4 rows × 3 columns
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(categories) { (title, imageRes) ->
+                        CategoryBox(title = title, imageRes = imageRes)
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+fun CategoryBox(
+    title: String,
+    imageRes: Int, // pass your drawable resource here
+    onClick: () -> Unit = {}
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+            Box(
+                modifier = Modifier
+                    .size(58.dp) // 48.dp + 10.dp bigger
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.9f))
+                    .clickable { onClick() },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = title,
+                    modifier = Modifier.size(30.dp), // slightly smaller than the box
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = title,
+                color = Color.Black,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
     }
 }
 

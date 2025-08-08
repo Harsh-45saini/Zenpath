@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.zenpath.ui.categories.AllCategoriesScreen
 import com.example.zenpath.ui.home.HomeScreen
 import com.example.zenpath.ui.mostpopular.MostPopularScreen
 import com.example.zenpath.ui.profile.ProfileScreen
@@ -31,6 +32,9 @@ class MainActivity : BaseActivity() {
                     composable("most_popular") { MostPopularScreen(navController = navController) }
                     composable("privacy_policy") {
                         PrivacyPolicyScreen(navController = navController)
+                    }
+                    composable("categories") {
+                        AllCategoriesScreen(navController = navController)
                     }
                     composable("settingsDetail") {
                         SettingScreen(navController = navController)
