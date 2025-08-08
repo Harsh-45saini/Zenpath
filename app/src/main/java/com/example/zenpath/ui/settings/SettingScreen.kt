@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
@@ -47,8 +46,6 @@ import androidx.navigation.compose.rememberNavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(navController: NavHostController) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
 
     var name by remember { mutableStateOf("") }
@@ -136,7 +133,7 @@ fun SettingScreen(navController: NavHostController) {
 
                     ProfileRowItem(R.drawable.calendar, "Daily Reminders") {
                         bottomSheetContent = {
-                            DailyReminderSheet(onDismiss = { bottomSheetContent = null } )
+                            DailyReminderSheet(onDismiss = { bottomSheetContent = null })
                         }
                     }
 
@@ -147,7 +144,11 @@ fun SettingScreen(navController: NavHostController) {
                     ProfileRowItem(R.drawable.paper, "Terms of Service") {
                         bottomSheetContent = {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Terms of Service", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    "Terms of Service",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Text("Understand your rights and obligations when using this app.")
                             }
                         }
@@ -209,10 +210,9 @@ fun SettingScreen(navController: NavHostController) {
 fun CustomBottomSheetWrapper(
     bottomSheetContent: (@Composable () -> Unit)?,
     onDismiss: () -> Unit,
-        sheetHeight: Dp,
+    sheetHeight: Dp,
     heightFraction: Float = 0.74f
 ) {
-    val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -252,7 +252,7 @@ fun AccountInfoSheet(
     description: String,
     onDescriptionChange: (String) -> Unit
 ) {
-    val sansFont= FontFamily(
+    val sansFont = FontFamily(
         Font(R.font.ptsans_regular, FontWeight.Light),
     )
 
@@ -899,32 +899,12 @@ fun AddActionRow(
     }
 }
 
-@Composable
-fun PrivacyPolicySheet() {
-    Column(modifier = Modifier.padding(20.dp)) {
-        Text("Privacy Policy", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        // Static text or scrollable content
-    }
-}
-
-@Composable
-fun TermsOfServiceSheet() {
-    Column(modifier = Modifier.padding(20.dp)) {
-        Text("Terms of Service", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        // Content here
-    }
-}
-
-@Composable
-fun SignOutSheet() {
-    Column(modifier = Modifier.padding(20.dp)) {
-        Text("Sign Out?", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { /* handle logout */ }) {
-            Text("Confirm Sign Out")
-        }
-    }
-}
+//@Composable
+//fun TermsOfServiceSheet() {
+//    Column(modifier = Modifier.padding(20.dp)) {
+//        Text("Terms of Service", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+//        // Content here
+//    }
 
 @Composable
 fun LabeledInputField(

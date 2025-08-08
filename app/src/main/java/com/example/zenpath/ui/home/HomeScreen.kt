@@ -181,7 +181,7 @@ fun LottieLoader(
 
     LottieAnimation(
         composition = composition,
-        progress = progress,
+        progress = {progress},
         modifier = modifier
             .size(120.dp),
         dynamicProperties = dynamicProperties

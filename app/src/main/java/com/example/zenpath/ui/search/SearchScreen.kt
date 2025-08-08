@@ -113,7 +113,7 @@ fun SearchScreen(navController: NavController) {
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.setting),
+                            painter = painterResource(id = R.drawable.filter),
                             contentDescription = "Settings Icon",
                             modifier = Modifier.size(25.dp)
                         )
