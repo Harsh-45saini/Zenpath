@@ -1,41 +1,41 @@
-package com.example.zenpath.data.api
+    package com.example.zenpath.data.api
 
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+    import okhttp3.OkHttpClient
+    import okhttp3.logging.HttpLoggingInterceptor
+    import retrofit2.Retrofit
+    import retrofit2.converter.gson.GsonConverterFactory
+    import java.util.concurrent.TimeUnit
 
-object ApiClient {
-    private var retrofit: Retrofit? = null
-    const val BASE_URL = "https://meditation.testingbeta.in"  // <-- Added /api/ and trailing slash
+    object ApiClient {
+        private var retrofit: Retrofit? = null
+        const val BASE_URL = "https://meditation.testingbeta.in"  // <-- Added /api/ and trailing slash
 
-    val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
 
-    fun getClient(token: String? = null): Retrofit {
-        val okHttpClient = OkHttpClient.Builder().apply {
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(10, TimeUnit.SECONDS)
-            writeTimeout(10, TimeUnit.SECONDS)
+        fun getClient(token: String? = null): Retrofit {
+            val okHttpClient = OkHttpClient.Builder().apply {
+                connectTimeout(10, TimeUnit.SECONDS)
+                readTimeout(10, TimeUnit.SECONDS)
+                writeTimeout(10, TimeUnit.SECONDS)
 
-            addInterceptor(logging)
+                addInterceptor(logging)
 
-            if (token != null) {
-                addInterceptor { chain ->
-                    val request = chain.request().newBuilder()
-                        .addHeader("Authorization", "Bearer $token")
-                        .build()
-                    chain.proceed(request)
+                if (token != null) {
+                    addInterceptor { chain ->
+                        val request = chain.request().newBuilder()
+                            .addHeader("Authorization", "Bearer $token")
+                            .build()
+                        chain.proceed(request)
+                    }
                 }
-            }
-        }.build()
+            }.build()
 
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build().also { retrofit = it }
+            return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().also { retrofit = it }
+        }
     }
-}

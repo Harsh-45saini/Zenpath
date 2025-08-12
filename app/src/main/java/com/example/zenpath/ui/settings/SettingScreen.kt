@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.Font
@@ -61,6 +61,15 @@ fun SettingScreen(navController: NavHostController) {
 
     val context = LocalContext.current
     val settingViewModel = remember { SettingViewModel() }
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        settingViewModel.fetchPrivacyPolicy()
+        settingViewModel.fetchTermsAndConditions()
+    }
+
+    val privacyPolicy by settingViewModel.privacyPolicyLiveData.observeAsState("")
+    val terms by settingViewModel.termsLiveData.observeAsState("")
 
     val shape = RoundedCornerShape(
         topStart = 30.dp,
@@ -144,23 +153,22 @@ fun SettingScreen(navController: NavHostController) {
                     }
 
                     ProfileRowItem(R.drawable.profile, "Privacy Policy") {
-                        navController.navigate("privacy_policy")
-                    }
+                        bottomSheetContent = {
+                            PrivacyPolicySheet(
+                                policyText = privacyPolicy,
+                                onDismiss = { bottomSheetContent = null }
+                            )
+                        }
+                     }
 
                     ProfileRowItem(R.drawable.paper, "Terms of Service") {
                         bottomSheetContent = {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    "Terms of Service",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text("Understand your rights and obligations when using this app.")
-                            }
+                          TermsAndServicesSheet(
+                                termsText = terms,
+                                onDismiss = { bottomSheetContent = null }
+                            )
                         }
                     }
-
-                    var showDialog by remember { mutableStateOf(false) }
 
                     ProfileRowItem(R.drawable.logout, "Sign Out") {
                         showDialog = true
@@ -186,15 +194,17 @@ fun SettingScreen(navController: NavHostController) {
                 modifier = Modifier
                     .size(48.dp)
                     .align(Alignment.TopEnd)
-                    .offset(x = (-6).dp, y = 12.dp)
+                    .offset(x = (-6).dp , y = 4.dp)
                     .zIndex(1f)
                     .background(
                         color = Color(0xFFD0E8FF),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .clickable {
-                        // Remove Settings screen from backstack and go to Profile
-                        navController.popBackStack() // This assumes you came from Profile
+                        navController.navigate("profile_screen") {
+                            launchSingleTop = true
+                            popUpTo("settingsDetail") { inclusive = true }
+                        }
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -726,6 +736,121 @@ fun NotificationsSheet(onDismiss: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun PrivacyPolicySheet(
+    policyText: String,
+    onDismiss: () -> Unit
+) {
+    val sansFont = FontFamily(Font(R.font.ptsans_regular, FontWeight.Light))
+
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(top = 30.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+    ) {
+        // Header Row (Heading + Cancel button)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Privacy Policy",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif,
+                color = colorResource(id = R.color.blue)
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clickable { onDismiss() }
+                    .background(
+                        color = colorResource(id = R.color.blue),
+                        shape = RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.x),
+                    contentDescription = "Cancel",
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Content Text
+        Text(
+            text = policyText,
+            fontSize = 14.sp,
+            fontFamily = sansFont,
+            fontWeight = FontWeight.Normal,
+            color = Color.DarkGray
+        )
+    }
+}
+
+@Composable
+fun TermsAndServicesSheet(
+    termsText: String,
+    onDismiss: () -> Unit
+) {
+    val sansFont = FontFamily(Font(R.font.ptsans_regular, FontWeight.Light))
+
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(top = 30.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+    ) {
+        // Header Row (Heading + Cancel button)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Terms of Service",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif,
+                color = colorResource(id = R.color.blue)
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clickable { onDismiss() }
+                    .background(
+                        color = colorResource(id = R.color.blue),
+                        shape = RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.x),
+                    contentDescription = "Cancel",
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Content Text
+        Text(
+            text = termsText,
+            fontSize = 14.sp,
+            fontFamily = sansFont,
+            fontWeight = FontWeight.Normal,
+            color = Color.DarkGray
+        )
+    }
+}
+
 
 @Composable
 fun DailyReminderSheet(onDismiss: () -> Unit) {

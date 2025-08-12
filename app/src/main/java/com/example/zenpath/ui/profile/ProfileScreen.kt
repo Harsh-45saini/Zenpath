@@ -267,7 +267,10 @@ fun RowWithImagesAndCenterText(navController: NavHostController) {
                     shape = RoundedCornerShape(12.dp) // rounded corners
                 )
                 .clickable {
-                    navController.navigate("settingsDetail")
+                    navController.navigate("settingsDetail") {
+                        launchSingleTop = true
+                        popUpTo("profile_screen") { inclusive = false }
+                    }
                 },
             contentAlignment = Alignment.Center
         ) {

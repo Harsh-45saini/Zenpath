@@ -405,7 +405,7 @@ fun InfoCard(practice: Practice) {
                 contentDescription = "Zen Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .weight(0.4f)
+                    .weight(0.3f)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(8.dp))
             )
@@ -431,7 +431,9 @@ fun TopProfileBar(userName: String? , navController: NavController) {
                     .size(50.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        navController.navigate("profile_screen")
+                        navController.navigate("profile_screen") {
+                            launchSingleTop = true
+                        }
                     }
                     .background(colorResource(id = R.color.light_blue))
             ) {
