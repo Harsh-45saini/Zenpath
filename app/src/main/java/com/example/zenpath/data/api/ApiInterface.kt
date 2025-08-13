@@ -24,6 +24,8 @@ interface ApiInterface {
     @GET("/api/dashboard")
     fun getDashboardData(@Header("Authorization") token: String): Call<DashboardResponse>
 
+    // Public endpoint — no Authorization header needed
+
     @GET("/api/categories")
     fun getAllCategories(@Header("Authorization") token: String): Call<CategoriesResponse>
 

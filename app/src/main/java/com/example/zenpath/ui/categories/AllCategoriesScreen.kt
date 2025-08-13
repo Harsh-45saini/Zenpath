@@ -1,5 +1,6 @@
 package com.example.zenpath.ui.categories
 
+import android.util.Log
 import coil.compose.AsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,17 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.R
 import com.example.zenpath.data.local.PrefManager
+
 import com.example.zenpath.ui.viewmodel.CategoriesViewModel
 
 @Composable
@@ -39,12 +38,18 @@ fun AllCategoriesScreen(
 ) {
     val categoriesResponse by viewModel.categoriesResponse.observeAsState()
     val error by viewModel.error.observeAsState()
+    var localError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        // Retrieve token from PrefManager and fetch categories
         val token = prefManager.getToken()
-        viewModel.fetchAllCategories(token)
+        Log.d("TOKEN_CHECK", "Token: $token")
+        if (!token.isNullOrBlank()) {
+            viewModel.fetchAllCategories(token)  // only call if token exists
+        } else {
+            localError = "Token missing"
+        }
     }
+
 
     Box(
         modifier = Modifier
@@ -124,11 +129,3 @@ fun CategoryBox(
         )
     }
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun AllCategoriesScreenPreview() {
-//    // Create a dummy ViewModel instance (you might want to pass fake data)
-//    val dummyViewModel = CategoriesViewModel()
-//    AllCategoriesScreen(navController = rememberNavController(), viewModel = dummyViewModel , prefManager)
-//}

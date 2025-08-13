@@ -83,7 +83,7 @@ fun SearchScreen(navController: NavController) {
                             leadingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.leftarrow),
-                                    modifier = Modifier.size(24.dp),
+                                    modifier = Modifier.size(20.dp),
                                     contentDescription = "Search Icon",
                                     tint = colorResource(id = R.color.blue)
                                 )
@@ -136,7 +136,7 @@ fun SearchScreen(navController: NavController) {
 
                 CustomVerticalList()
 
-                Spacer(modifier = Modifier.height(26.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 CustomRow(navController)
 
@@ -169,8 +169,8 @@ fun ListItem(title: String, subtitle: String) {
         // 1. Image inside a Box
         Box(
             modifier = Modifier
-                .size(65.dp)
-                .clip(RoundedCornerShape(12.dp)) // Clip the whole Box
+                .size(55.dp)
+                .clip(RoundedCornerShape(15.dp))
                 .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
