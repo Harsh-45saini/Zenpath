@@ -13,8 +13,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
@@ -27,6 +33,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -179,7 +186,7 @@ fun SettingScreen(navController: NavHostController) {
                             context = context,
                             settingViewModel = settingViewModel,
                             onDismiss = { showDialog = false},
-                            onLogoutRedirect = { 
+                            onLogoutRedirect = {
                                 // Navigate to Auth screen here
                                 navController.navigate("login") {
                                     popUpTo(0) { inclusive = true } // Clear backstack
@@ -600,6 +607,154 @@ fun CustomSignOutDialog(
         }
     }
 }
+
+@Composable
+fun CustomTimePickerDialog(
+    title: String,
+    onDismiss: () -> Unit,
+    onConfirm: (Int, Int, String) -> Unit
+) {
+    var hours by remember { mutableStateOf(0) }
+    var minutes by remember { mutableStateOf(0) }
+    var shift by remember { mutableStateOf("AM") } // AM or PM
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(colorResource(id = R.color.blue))
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+
+                // Title
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                // Labels row
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Hours", color = Color.White, fontSize = 14.sp)
+                    Text("Minutes", color = Color.White, fontSize = 14.sp)
+                    Text("Shift", color = Color.White, fontSize = 14.sp)
+                }
+
+                // Pickers row
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    NumberPicker(
+                        value = hours,
+                        range = 1..12,
+                        onValueChange = { hours = it }
+                    )
+                    NumberPicker(
+                        value = minutes,
+                        range = 0..59,
+                        onValueChange = { minutes = it }
+                    )
+                    ShiftPicker(
+                        value = shift,
+                        onValueChange = { shift = it }
+                    )
+                }
+
+                // Confirm Button
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White)
+                        .clickable { onConfirm(hours, minutes, shift) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Confirm",
+                        color = colorResource(id = R.color.blue),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                // Cancel Button
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(
+                            width = 0.25.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .background(colorResource(id = R.color.blue))
+                        .clickable { onDismiss() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NumberPicker(value: Int, range: IntRange, onValueChange: (Int) -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        IconButton(onClick = {
+            if (value < range.last) onValueChange(value + 1)
+        }) {
+            Icon(Icons.Default.KeyboardArrowUp, contentDescription = null, tint = Color.White)
+        }
+        Text(value.toString().padStart(2, '0'), color = Color.White, fontSize = 16.sp)
+        IconButton(onClick = {
+            if (value > range.first) onValueChange(value - 1)
+        }) {
+            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.White)
+        }
+    }
+}
+
+@Composable
+fun ShiftPicker(value: String, onValueChange: (String) -> Unit) {
+    val options = listOf("AM", "PM")
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        IconButton(onClick = {
+            val currentIndex = options.indexOf(value)
+            val newIndex = (currentIndex + 1) % options.size
+            onValueChange(options[newIndex])
+        }) {
+            Icon(Icons.Default.KeyboardArrowUp, contentDescription = null, tint = Color.White)
+        }
+        Text(value, color = Color.White, fontSize = 16.sp)
+        IconButton(onClick = {
+            val currentIndex = options.indexOf(value)
+            val newIndex = (currentIndex - 1 + options.size) % options.size
+            onValueChange(options[newIndex])
+        }) {
+            Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.White)
+        }
+    }
+}
+
 
 @Composable
 fun NotificationsSheet(onDismiss: () -> Unit) {

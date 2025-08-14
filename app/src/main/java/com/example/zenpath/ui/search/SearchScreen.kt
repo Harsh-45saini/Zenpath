@@ -181,7 +181,7 @@ fun ListItem(title: String, subtitle: String) {
                 modifier = Modifier.fillMaxSize() // Fill the entire Box
             )
         }
-        
+
         // 2. Space between Box and Column
         Spacer(modifier = Modifier.width(12.dp))
 

@@ -79,8 +79,6 @@ class PrefManager(context: Context) {
         var KYCStatus = "kycstatus"
 
         var LangMaster = "languagemaster"
-
-
         private const val PREF_NAME = "MeraForm"
         private const val IS_LOGIN = "IsLoggedIn"
     }
