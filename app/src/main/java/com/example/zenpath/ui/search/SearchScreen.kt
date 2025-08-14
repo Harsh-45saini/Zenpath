@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
@@ -182,7 +178,7 @@ fun ListItem(title: String, subtitle: String) {
                 contentDescription = "Avatar",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(55.dp)
                     .clip(RoundedCornerShape(12.dp))
             )
         }
@@ -322,7 +318,6 @@ fun TwoInfoBoxes() {
     }
 }
 
-
 @Composable
 fun FourActionBoxes(navController: NavController) {
     Column(
@@ -380,7 +375,6 @@ fun CustomRow(navController: NavController) {
         FourActionBoxes(navController = navController)
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
