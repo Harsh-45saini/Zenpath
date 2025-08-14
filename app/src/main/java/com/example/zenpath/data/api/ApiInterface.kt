@@ -1,6 +1,7 @@
 package com.example.zenpath.data.api
 
 import com.example.zenpath.data.model.CategoriesResponse
+import com.example.zenpath.data.model.DailyPracticeResponse
 import com.example.zenpath.data.model.DashboardResponse
 import com.example.zenpath.data.model.LoginRequest
 import com.example.zenpath.data.model.LoginResponse
@@ -13,6 +14,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiInterface {
     @POST("/api/users/register")
@@ -24,8 +26,6 @@ interface ApiInterface {
     @GET("/api/dashboard")
     fun getDashboardData(@Header("Authorization") token: String): Call<DashboardResponse>
 
-    // Public endpoint — no Authorization header needed
-
     @GET("/api/categories")
     fun getAllCategories(@Header("Authorization") token: String): Call<CategoriesResponse>
 
@@ -34,5 +34,14 @@ interface ApiInterface {
 
     @GET("/api/terms-conditions/latest")
     fun getTermsOfService(): Call<TermsAndConditionsResponse>
+
+    @GET("daily-practices/category/{categoryId}")
+    fun getDailyPractices(
+        @Path("categoryId") categoryId: Int
+    ): Call<DailyPracticeResponse>
+
+    // Get all
+    @GET("/api/daily-practices")
+    fun getAllDailyPractices(): Call<DailyPracticeResponse>
 
 }

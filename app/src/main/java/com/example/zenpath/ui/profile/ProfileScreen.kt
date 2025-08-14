@@ -280,7 +280,6 @@ fun RowWithImagesAndCenterText(navController: NavHostController) {
                 modifier = Modifier.size(25.dp)
             )
         }
-
     }
 }
 
@@ -403,7 +402,7 @@ fun InfoCard(
 @Composable
 fun ProfileScreenPreview() {
     val fakeNavController = rememberNavController() // add this
-    ZenpathTheme{
+    ZenpathTheme {
         ProfileScreen(
             navController = fakeNavController,
             onNavigateToOther = {}
