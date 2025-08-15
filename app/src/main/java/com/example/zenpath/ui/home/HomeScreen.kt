@@ -5,6 +5,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import coil.compose.AsyncImage
 import androidx.compose.foundation.border
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.layout.*
@@ -21,6 +25,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,7 +99,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(colorResource(id = R.color.white))
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 25.dp, vertical = 40.dp)
+                .padding(horizontal = 18.dp, vertical = 40.dp)
         ) {
             TopProfileBar(userName,navController = navController)
 
@@ -196,9 +201,19 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
 
     val topPractices = dashboardData?.topPractices.orEmpty()
 
-    // Fallback if less than 2 practices are available
     val practice1 = topPractices.getOrNull(0)
     val practice2 = topPractices.getOrNull(1)
+
+    // States to trigger animations
+    val showTitle1 = remember { mutableStateOf(false) }
+    val showTitle2 = remember { mutableStateOf(false) }
+
+    // Start animations on load
+    LaunchedEffect(Unit) {
+        showTitle1.value = true
+        delay(200) // Stagger for nicer effect
+        showTitle2.value = true
+    }
 
     Row(modifier = Modifier.fillMaxWidth()) {
 
@@ -249,17 +264,31 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
                             .padding(10.dp)
                     )
 
-                    Text(
-                        text = it.title,
-                        color = Color.White,
-                        fontFamily = ptSerifFont,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .padding(14.dp)
-                    )
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = showTitle2.value,
+                        enter = slideInVertically(
+                            initialOffsetY = { fullHeight -> fullHeight },
+                            animationSpec = tween(durationMillis = 600)
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { fullHeight -> fullHeight },
+                            animationSpec = tween(durationMillis = 600)
+                        )
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Text(
+                                text = it.title,
+                                color = Color.White,
+                                fontFamily = ptSerifFont,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .fillMaxWidth()
+                                    .padding(14.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -294,17 +323,31 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
                             .padding(10.dp)
                     )
 
-                    Text(
-                        text = it.title,
-                        color = Color.White,
-                        fontFamily = ptSerifFont,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .padding(14.dp)
-                    )
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = showTitle2.value,
+                        enter = slideInVertically(
+                            initialOffsetY = { fullHeight -> fullHeight },
+                            animationSpec = tween(durationMillis = 600)
+                        ),
+                        exit = slideOutVertically(
+                            targetOffsetY = { fullHeight -> fullHeight },
+                            animationSpec = tween(durationMillis = 600)
+                        )
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Text(
+                                text = it.title,
+                                color = Color.White,
+                                fontFamily = ptSerifFont,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .fillMaxWidth()
+                                    .padding(14.dp)
+                            )
+                        }
+                    }
                 }
             }
 
@@ -405,7 +448,7 @@ fun InfoCard(practice: Practice) {
                 contentDescription = "Zen Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .weight(0.4f)
+                    .weight(0.3f)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(8.dp))
             )
@@ -431,7 +474,9 @@ fun TopProfileBar(userName: String? , navController: NavController) {
                     .size(50.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        navController.navigate("profile_screen")
+                        navController.navigate("profile_screen") {
+                            launchSingleTop = true
+                        }
                     }
                     .background(colorResource(id = R.color.light_blue))
             ) {
@@ -471,6 +516,9 @@ fun TopProfileBar(userName: String? , navController: NavController) {
                 modifier = Modifier
                     .size(45.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        navController.navigate("categories")
+                    }
                     .background(colorResource(id = R.color.light_blue)),
                 contentAlignment = Alignment.Center// dark_green_image22
             ) {

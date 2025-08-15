@@ -1,22 +1,28 @@
 package com.example.zenpath.ui.mostpopular
 
-import androidx.compose.material3.Button
 import androidx.compose.foundation.Image
+import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -25,54 +31,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.R
-import com.example.zenpath.data.model.MusicItem
 import com.example.zenpath.ui.theme.ZenpathTheme
+import com.example.zenpath.ui.viewmodel.MostPopularViewModel
+import com.example.zenpath.ui.viewmodel.MostPopularViewModelFactory
 
 @Composable
-fun MostPopularScreen() {
-    val ptSerif = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
-    val ptSans = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
-
-    val sampleMusicList = listOf(
-        MusicItem(
-            backgroundImage = R.drawable.image1,
-            playIcon = R.drawable.play_icon,
-            title = "Midnight &\nrelaxation"
-        ),
-        MusicItem(
-            backgroundImage = R.drawable.image2,
-            playIcon = R.drawable.play_icon,
-            title = "Jogging and \ncycling"
-        ),
-        MusicItem(
-            backgroundImage = R.drawable.image3,
-            playIcon = R.drawable.play_icon,
-            title = "Midnight\nLaunderetee"
-        ),
-        MusicItem(
-            backgroundImage = R.drawable.image4,
-            playIcon = R.drawable.play_icon,
-            title = "Jogging and \ncycling"
-        ),
-        MusicItem(
-            backgroundImage = R.drawable.image5,
-            playIcon = R.drawable.play_icon,
-            title = "Tickle Me \nPink"
-        ),
-        MusicItem(
-            backgroundImage = R.drawable.image6,
-            playIcon = R.drawable.play_icon,
-            title = "Michael in the\nBathroom"
-        )
+fun MostPopularScreen(
+    navController: NavController
+) {
+    val context = LocalContext.current
+    val viewModel: MostPopularViewModel = viewModel(
+        factory = MostPopularViewModelFactory(context)
     )
+
+    val musicList by viewModel.musicList.observeAsState(emptyList())
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchMostPopularAll()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.white))
-            .padding(horizontal = 25.dp, vertical = 40.dp)
+            .padding(horizontal = 18.dp, vertical = 40.dp)
     ) {
-        MostPopular()
+        MostPopular(navController = navController)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -81,52 +68,30 @@ fun MostPopularScreen() {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(sampleMusicList) { music ->
+            items(musicList) { music ->
                 MusicCard(
-                    backgroundImage = music.backgroundImage,
-                    playIcon = music.playIcon,
+                    imageUrl = music.cover_image,
                     title = music.title
                 )
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { },
-            shape = RoundedCornerShape(18.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Load More",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = ptSans,
-                color = Color.White,
-                modifier = Modifier.padding(vertical = 10.dp)
-            )
         }
     }
 }
 
 @Composable
-fun MostPopular() {
-    val ptSerifFont = FontFamily(
-        Font(R.font.ptserif_regular, FontWeight.Normal)
-    )
+fun MostPopular(
+    navController: NavController
+) {
+
+    val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = 0.dp,
-                vertical = 8.dp
-            ), // Removed horizontal to avoid duplicate padding
+            .padding(horizontal = 0.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -134,6 +99,7 @@ fun MostPopular() {
         Box(
             modifier = Modifier
                 .size(45.dp)
+                .clickable { navController.navigate("home") }
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.light_blue)),
             contentAlignment = Alignment.Center
@@ -159,6 +125,7 @@ fun MostPopular() {
         Box(
             modifier = Modifier
                 .size(45.dp)
+                .clickable { navController.navigate("search_screen") }
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.light_blue)),
             contentAlignment = Alignment.Center
@@ -176,8 +143,7 @@ fun MostPopular() {
 
 @Composable
 fun MusicCard(
-    backgroundImage: Int,
-    playIcon: Int,
+    imageUrl: String,
     title: String
 ) {
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
@@ -189,14 +155,14 @@ fun MusicCard(
             .clip(RoundedCornerShape(22.dp))
     ) {
         Image(
-            painter = painterResource(id = backgroundImage),
+            painter = rememberAsyncImagePainter(imageUrl),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
 
         Image(
-            painter = painterResource(id = playIcon),
+            painter = painterResource(id = R.drawable.play_icon), // your play icon
             contentDescription = "Play Button",
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -221,6 +187,7 @@ fun MusicCard(
 @Composable
 fun MostPopularPreview() {
     ZenpathTheme {
-        MostPopularScreen()
+        val fakeNavController = rememberNavController()
+        MostPopularScreen(navController = fakeNavController)
     }
 }

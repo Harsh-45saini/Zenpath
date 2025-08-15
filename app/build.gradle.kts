@@ -52,6 +52,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    implementation(libs.androidx.runtime.livedata)
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -82,7 +87,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.androidx.appcompat.v161)
     implementation(libs.androidx.foundation) // or the latest
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation(libs.coil.compose)
     implementation(libs.litert.support.api)
 
     testImplementation(libs.junit)

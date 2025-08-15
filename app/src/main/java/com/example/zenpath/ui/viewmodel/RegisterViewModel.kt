@@ -80,7 +80,7 @@ class RegisterViewModel(
 
                             registerStatus.value = "Register Success"
                             isRegisterSuccessful.value = true
-                            Log.d("RegisterViewModel", "Loaded full name: $userName")
+                            Log.d("RegisterViewModel", "Loaded full name: $userName and loaded email : $userEmail")
 
                             UserSessionUtil.saveUserSession(context, token, userName, userEmail)
 

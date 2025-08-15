@@ -83,7 +83,7 @@ fun SearchScreen(navController: NavController) {
                             leadingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.leftarrow),
-                                    modifier = Modifier.size(24.dp),
+                                    modifier = Modifier.size(20.dp),
                                     contentDescription = "Search Icon",
                                     tint = colorResource(id = R.color.blue)
                                 )
@@ -98,7 +98,9 @@ fun SearchScreen(navController: NavController) {
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,
                                 errorIndicatorColor = Color.Transparent,
-                                cursorColor = Color.Blue
+                                cursorColor = Color.Blue,
+                                focusedTextColor = Color.Blue,
+                                unfocusedTextColor = Color.Blue
                             )
                         )
                     }
@@ -109,12 +111,10 @@ fun SearchScreen(navController: NavController) {
                     Box(
                         modifier = Modifier
                             .size(48.dp)
+                            .offset(y = (-6 ).dp)
                             .padding(bottom = 2.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFFD0E8FF))
-                            .clickable {
-                                navController.navigate("settingsDetail")
-                            },
+                            .background(Color(0xFFD0E8FF)),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
@@ -135,7 +135,8 @@ fun SearchScreen(navController: NavController) {
                 )
 
                 CustomVerticalList()
-                Spacer(modifier = Modifier.height(36.dp))
+
+                Spacer(modifier = Modifier.weight(1f))
 
                 CustomRow(navController)
 
@@ -169,7 +170,7 @@ fun ListItem(title: String, subtitle: String) {
         Box(
             modifier = Modifier
                 .size(55.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(15.dp))
                 .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
@@ -177,9 +178,7 @@ fun ListItem(title: String, subtitle: String) {
                 painter = painterResource(id = R.drawable.rectangle_9500),
                 contentDescription = "Avatar",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(55.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                modifier = Modifier.fillMaxSize() // Fill the entire Box
             )
         }
 
@@ -237,12 +236,12 @@ fun ActionBox(
 @Composable
 fun TwoInfoBoxes() {
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .height(74.dp)
+                .height(80.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .paint(
                     painter = painterResource(id = R.drawable.rectangle_9513), // replace with your image name
@@ -280,7 +279,7 @@ fun TwoInfoBoxes() {
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .height(74.dp)
+                .height(80.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .paint(
                     painter = painterResource(id = R.drawable.rectangle_9523), // replace with your image name
@@ -321,7 +320,7 @@ fun TwoInfoBoxes() {
 @Composable
 fun FourActionBoxes(navController: NavController) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ActionBox(
             imageRes = R.drawable.leaf,
@@ -348,14 +347,13 @@ fun CustomRow(navController: NavController) {
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 34.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         // First Column
         Column(
-            verticalArrangement = Arrangement.spacedBy(26.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
                 .weight(1f)
         ) {
