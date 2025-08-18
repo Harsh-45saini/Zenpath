@@ -1,4 +1,4 @@
-package com.example.zenpath
+package com.example.zenpath.ui.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.example.zenpath.R
 import com.example.zenpath.data.local.PrefManager
 import kotlinx.coroutines.delay
 
