@@ -44,7 +44,6 @@ fun AuthScreen(navController: NavHostController) {
     val tabs = listOf("Login", "Register")
 
     // ViewModels
-    val context = LocalContext.current
     val loginViewModel: LoginViewModel = viewModel(
         factory = LoginViewModelFactory(AuthRepository())
     )
