@@ -3,7 +3,6 @@ package com.example.zenpath.ui.mostpopular
 import androidx.compose.foundation.Image
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.*

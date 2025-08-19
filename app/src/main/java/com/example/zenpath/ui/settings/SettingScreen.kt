@@ -1,6 +1,7 @@
 package com.example.zenpath.ui.settings
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -223,9 +224,9 @@ fun SettingScreen(navController: NavHostController) {
 
     CustomBottomSheetWrapper(
         bottomSheetContent = bottomSheetContent,
-        onDismiss = { bottomSheetContent = null },
-        sheetHeight = sheetHeight
-    )
+    onDismiss = { bottomSheetContent = null },
+    sheetHeight = sheetHeight
+)
 
 }
 
