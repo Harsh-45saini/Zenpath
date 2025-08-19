@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.R
+import com.example.zenpath.ui.navigation.Screen
 import com.example.zenpath.ui.theme.ZenpathTheme
 import com.example.zenpath.ui.viewmodel.MostPopularViewModel
 import com.example.zenpath.ui.viewmodel.MostPopularViewModelFactory
@@ -98,7 +99,8 @@ fun MostPopular(
         Box(
             modifier = Modifier
                 .size(45.dp)
-                .clickable { navController.navigate("home") }
+                .clickable { navController.popBackStack(   route = Screen.Home.route,
+                    inclusive = false)  }
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.light_blue)),
             contentAlignment = Alignment.Center

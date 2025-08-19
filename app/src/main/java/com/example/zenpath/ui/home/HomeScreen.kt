@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import coil.compose.AsyncImage
+import com.example.zenpath.ui.navigation.Screen
 import androidx.compose.foundation.border
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -156,7 +157,7 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            TwoColumnLayout(viewModel = viewModel)
+            TwoColumnLayout(viewModel = viewModel , navController)
         }
     }
 }
@@ -193,7 +194,7 @@ fun LottieLoader(
 }
 
 @Composable
-fun TwoColumnLayout(viewModel: HomeViewModel) {
+fun TwoColumnLayout(viewModel: HomeViewModel, navController: NavController) {
     val dashboardData by viewModel.dashboardData.collectAsState()
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
     val ptSansFont = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
@@ -353,7 +354,9 @@ fun TwoColumnLayout(viewModel: HomeViewModel) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = { viewModel.onExploreMoreClicked() },
+                onClick = {
+                    navController.navigate(Screen.MostPopularScreen.route)
+                },
                 shape = RoundedCornerShape(18.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
                 modifier = Modifier.fillMaxWidth()
