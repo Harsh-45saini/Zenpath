@@ -1,6 +1,9 @@
 package com.example.zenpath.ui.categories
 
 import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +43,9 @@ fun AllCategoriesScreen(
     val categoriesResponse by viewModel.categoriesResponse.observeAsState()
     val error by viewModel.error.observeAsState()
     var localError by remember { mutableStateOf<String?>(null) }
+    val protestStrike = FontFamily(
+        Font(R.font.protest_strike, FontWeight.Light),
+    )
 
     LaunchedEffect(Unit) {
         val token = prefManager.getToken()
@@ -50,39 +57,93 @@ fun AllCategoriesScreen(
         }
     }
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 22.dp, vertical = 40.dp)
+            .padding(horizontal = 18.dp , vertical = 38.dp)
     ) {
-        when {
-            categoriesResponse != null -> {
-                val categories = categoriesResponse?.data ?: emptyList()
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+        // 🔹 Background Image
+        Image(
+            painter = painterResource(id = R.drawable.bg_settings),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+                .background(Color.White)
+        )
+
+        // 🔹 Foreground Content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp)
+        ) {
+            // 🔹 Header Row (Text + Back Button)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Filter by\nCategories",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 30.dp),
+                    fontFamily = protestStrike,
+                    color = colorResource(id = R.color.black)
+                )
+
+                // Back Button Box
+                Box(
                     modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    contentPadding = PaddingValues(bottom = 20.dp)
+                        .size(45.dp)
+                        .offset(x = 15.dp)
+                        .clickable { navController.popBackStack() } // or onBack()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colorResource(id = R.color.light_blue)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    items(categories) { category ->
-                        CategoryBox(
-                            title = category.name,
-                            iconUrl = category.icon,
-                            modifier = Modifier.width(80.dp).wrapContentHeight()
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.category),
+                        contentDescription = "Back Arrow",
+                        modifier = Modifier.size(16.dp),
+                        contentScale = ContentScale.Fit
+                    )
                 }
             }
-            error != null -> {
-                Text("Error: $error", color = Color.Red)
-            }
-            else -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 🔹 Categories Grid
+            when {
+                categoriesResponse != null -> {
+                    val categories = categoriesResponse?.data ?: emptyList()
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        contentPadding = PaddingValues(bottom = 20.dp)
+                    ) {
+                        items(categories) { category ->
+                            CategoryBox(
+                                title = category.name,
+                                iconUrl = category.icon,
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .wrapContentHeight()
+                            )
+                        }
+                    }
+                }
+                error != null -> {
+                    Text("Error: $error", color = Color.Red)
+                }
+                else -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
             }
         }
     }
@@ -128,4 +189,32 @@ fun CategoryBox(
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "All Categories Screen")
+@Composable
+fun AllCategoriesScreenPreview() {
+    val navController = rememberNavController()
+
+    // Fake PrefManager (won’t really be used in preview)
+    val fakePrefManager = PrefManager(context = androidx.compose.ui.platform.LocalContext.current)
+
+    // Fake ViewModel (empty object just for preview)
+    val fakeViewModel = object : CategoriesViewModel() {}
+
+    AllCategoriesScreen(
+        navController = navController,
+        viewModel = fakeViewModel,
+        prefManager = fakePrefManager
+    )
+}
+
+
+@Preview(showBackground = true, name = "Single Category Box")
+@Composable
+fun CategoryBoxPreview() {
+    CategoryBox(
+        title = "Relaxation",
+        iconUrl = "/icons/relax.png"
+    )
 }

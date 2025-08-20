@@ -230,7 +230,7 @@ fun ListeningScreen(
                             Image(
                                 painter = painterResource(id = R.drawable.arrow_right), // 🔹 your custom drawable
                                 contentDescription = "Play",
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(20.dp)
                             )
                         }
 
