@@ -21,7 +21,7 @@ class HomeViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val repository = DashboardRepository()
+    private var repository: DashboardRepository? = null
     private val connectivityObserver = NetworkConnectivityObserver(application)
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
@@ -47,11 +47,12 @@ class HomeViewModel(
         val token = prefManager.getToken()
         Log.d("loadDashboard", "Token used: $token")
 
-        repository.getDashboardData(token).enqueue(object : Callback<DashboardResponse> {
+        repository = DashboardRepository(token) // ✅ inject token here
+
+        repository?.getDashboardData()?.enqueue(object : Callback<DashboardResponse> {
             override fun onResponse(call: Call<DashboardResponse>, response: Response<DashboardResponse>) {
                 if (response.isSuccessful) {
                     _dashboardData.value = response.body()?.data
-
                     val categories = response.body()?.data?.latestCategories ?: emptyList()
                     _categories.value = categories
                     Log.d("loadDashboard", "Dashboard and ${categories.size} categories loaded")

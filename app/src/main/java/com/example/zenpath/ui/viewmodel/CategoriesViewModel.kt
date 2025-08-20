@@ -1,5 +1,6 @@
 package com.example.zenpath.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,20 +21,27 @@ class CategoriesViewModel(
     val error: LiveData<String> get() = _error
 
     fun fetchAllCategories(token: String) {
+        Log.d("CategoriesViewModel", "Fetching categories with token: $token")
+
         repository.getAllCategories(token).enqueue(object : Callback<CategoriesResponse> {
             override fun onResponse(
                 call: Call<CategoriesResponse>,
                 response: Response<CategoriesResponse>
             ) {
                 if (response.isSuccessful && response.body() != null) {
+                    Log.d("CategoriesViewModel", "Categories loaded successfully: ${response.body()}")
                     _categoriesResponse.postValue(response.body())
                 } else {
-                    _error.postValue("Failed: ${response.code()}")
+                    val msg = "Failed: ${response.code()} - ${response.message()}"
+                    Log.e("CategoriesViewModel", msg)
+                    _error.postValue(msg)
                 }
             }
 
             override fun onFailure(call: Call<CategoriesResponse>, t: Throwable) {
-                _error.postValue("Error: ${t.message}")
+                val msg = "Error: ${t.message}"
+                Log.e("CategoriesViewModel", msg, t)
+                _error.postValue(msg)
             }
         })
     }

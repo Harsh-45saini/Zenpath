@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.R
+import com.example.zenpath.ui.navigation.Screen
 
 @Composable
 fun SearchScreen(navController: NavController) {
@@ -187,7 +188,7 @@ fun ListItem(title: String, subtitle: String) {
 
         // 3. Column with two Texts
         Column(
-            modifier = Modifier.weight(1f) // 👈 Take available space, but not push arrow away too far
+            modifier = Modifier.weight(1f)
         ) {
             Text(
                 text = title,
@@ -201,7 +202,6 @@ fun ListItem(title: String, subtitle: String) {
             )
         }
 
-        // 4. Arrow Image (just beside column)
         Image(
             painter = painterResource(id = R.drawable.arrow_right),
             contentDescription = "Arrow Image",
@@ -324,7 +324,7 @@ fun FourActionBoxes(navController: NavController) {
     ) {
         ActionBox(
             imageRes = R.drawable.leaf,
-            onClick = { navController.navigate("settingsDetail") }
+            onClick = { navController.navigate(Screen.Listening.route) }
         )
         ActionBox(
             imageRes = R.drawable.moon,

@@ -12,6 +12,7 @@ import com.example.zenpath.AuthScreen
 import com.example.zenpath.data.local.PrefManager
 import com.example.zenpath.ui.categories.AllCategoriesScreen
 import com.example.zenpath.ui.home.HomeScreen
+import com.example.zenpath.ui.listening.ListeningScreen
 import com.example.zenpath.ui.mostpopular.MostPopularScreen
 import com.example.zenpath.ui.profile.ProfileScreen
 import com.example.zenpath.ui.search.SearchScreen
@@ -27,6 +28,7 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settingsDetail")
     object Profile : Screen("profile_screen")
     object Search : Screen("search_screen")
+    object Listening : Screen("listening_screen")
 }
 
 fun NavHostController.safeNavigate(
@@ -74,6 +76,13 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
+        composable(Screen.Listening.route) {
+            ListeningScreen(
+                onBack = { navController.popBackStack() },
+                onSearch = { navController.navigate(Screen.Search.route) },
+                onPlayPause = { /* Handle play/pause */ }
+            )
+        }
         composable(Screen.Settings.route) {
             SettingScreen(navController = navController)
         }
