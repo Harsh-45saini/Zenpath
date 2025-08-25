@@ -47,7 +47,7 @@ class HomeViewModel(
         val token = prefManager.getToken()
         Log.d("loadDashboard", "Token used: $token")
 
-        repository = DashboardRepository(token) // ✅ inject token here
+        repository = DashboardRepository(token)
 
         repository?.getDashboardData()?.enqueue(object : Callback<DashboardResponse> {
             override fun onResponse(call: Call<DashboardResponse>, response: Response<DashboardResponse>) {

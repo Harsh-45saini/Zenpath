@@ -1,11 +1,20 @@
 package com.example.zenpath.ui.home
 
+import android.R.attr.translationX
 import android.util.Log
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import coil.compose.AsyncImage
 import com.example.zenpath.ui.navigation.Screen
 import androidx.compose.foundation.border
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.layout.*
@@ -27,8 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -42,7 +54,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.request.ImageRequest
 import com.airbnb.lottie.LottieProperty
-import com.example.yourapp.ui.common.ContinuousSlidingText
 import kotlinx.coroutines.launch
 import com.example.zenpath.R
 import com.example.zenpath.data.api.ApiClient
@@ -52,6 +63,7 @@ import com.example.zenpath.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.delay
 import com.example.zenpath.data.model.Category
 import com.example.zenpath.data.model.Practice
+import com.example.zenpath.ui.mostpopular.MostPopular
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -269,7 +281,8 @@ fun TwoColumnLayout(viewModel: HomeViewModel, navController: NavController) {
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .background(Color.Black.copy(alpha = 0.5f)) // Optional background for readability
+                            .padding(8.dp)
                     ) {
                         ContinuousSlidingText(text = it.title)
                     }
@@ -311,6 +324,7 @@ fun TwoColumnLayout(viewModel: HomeViewModel, navController: NavController) {
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .fillMaxWidth()
+                            .background(Color.Black.copy(alpha = 0.5f)) // Optional background for readability
                             .padding(8.dp)
                     ) {
                         ContinuousSlidingText(text = it.title)
@@ -585,6 +599,43 @@ fun FourDiffBox(categories: List<Category>) {
         }
     }
 }
+
+@Composable
+fun ContinuousSlidingText(text: String) {
+    val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
+    val infiniteTransition = rememberInfiniteTransition(label = "infiniteSlide")
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val animatedOffset by infiniteTransition.animateFloat(
+        initialValue = screenWidth.value,   // Start from right
+        targetValue = -screenWidth.value,   // Move completely left
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 6000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "slide"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp) // Adjust height as needed
+            .clipToBounds()
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            fontFamily = ptSerifFont,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier
+                .graphicsLayer {
+                    translationX = animatedOffset
+                }
+                .align(Alignment.CenterStart)
+        )
+    }
+}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
