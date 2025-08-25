@@ -112,7 +112,7 @@ fun SearchScreen(navController: NavController) {
                     Box(
                         modifier = Modifier
                             .size(48.dp)
-                            .offset(y = (-6 ).dp)
+                            .offset(y = (-6).dp)
                             .padding(bottom = 2.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {

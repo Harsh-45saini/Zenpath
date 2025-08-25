@@ -1,6 +1,5 @@
 package com.example.zenpath.ui.home
 
-import android.R.attr.translationX
 import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -13,8 +12,6 @@ import coil.compose.AsyncImage
 import com.example.zenpath.ui.navigation.Screen
 import androidx.compose.foundation.border
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.layout.*
@@ -63,7 +60,6 @@ import com.example.zenpath.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.delay
 import com.example.zenpath.data.model.Category
 import com.example.zenpath.data.model.Practice
-import com.example.zenpath.ui.mostpopular.MostPopular
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -281,8 +277,7 @@ fun TwoColumnLayout(viewModel: HomeViewModel, navController: NavController) {
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .fillMaxWidth()
-                            .background(Color.Black.copy(alpha = 0.5f)) // Optional background for readability
-                            .padding(8.dp)
+                            .padding(10.dp)
                     ) {
                         ContinuousSlidingText(text = it.title)
                     }
@@ -324,7 +319,6 @@ fun TwoColumnLayout(viewModel: HomeViewModel, navController: NavController) {
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .fillMaxWidth()
-                            .background(Color.Black.copy(alpha = 0.5f)) // Optional background for readability
                             .padding(8.dp)
                     ) {
                         ContinuousSlidingText(text = it.title)
@@ -500,7 +494,10 @@ fun TopProfileBar(userName: String? , navController: NavController) {
                     .size(45.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        navController.navigate("categories")
+                        navController.navigate("categories"){
+                            popUpTo("home") { inclusive = false } // keep home in stack
+                            launchSingleTop = true
+                        }
                     }
                     .background(colorResource(id = R.color.light_blue)),
                 contentAlignment = Alignment.Center// dark_green_image22

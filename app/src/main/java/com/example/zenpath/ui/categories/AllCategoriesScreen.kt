@@ -3,7 +3,6 @@ package com.example.zenpath.ui.categories
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -28,12 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.zenpath.R
 import com.example.zenpath.data.api.ApiClient
 import com.example.zenpath.data.local.PrefManager
+import com.example.zenpath.data.repository.CategoriesRepository
 
 import com.example.zenpath.ui.viewmodel.CategoriesViewModel
+import com.example.zenpath.ui.viewmodel.CategoriesViewModelFactory
 
 @Composable
 fun AllCategoriesScreen(
@@ -41,6 +44,8 @@ fun AllCategoriesScreen(
     viewModel: CategoriesViewModel,
     prefManager: PrefManager
 ) {
+    val context = LocalContext.current
+    val factory = CategoriesViewModelFactory(CategoriesRepository(), prefManager)
     val categoriesResponse by viewModel.categoriesResponse.observeAsState()
     val error by viewModel.error.observeAsState()
     var localError by remember { mutableStateOf<String?>(null) }
@@ -48,7 +53,7 @@ fun AllCategoriesScreen(
         Font(R.font.protest_strike, FontWeight.Light),
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         val token = prefManager.getToken()
         Log.d("TOKEN_CHECK", "Token: $token")
         if (!token.isNullOrBlank()) {
@@ -107,15 +112,16 @@ fun AllCategoriesScreen(
                     Image(
                         painter = painterResource(id = R.drawable.category),
                         contentDescription = "Back Arrow",
-                        modifier = Modifier.size(16.dp),
-                        contentScale = ContentScale.Fit
+                        modifier = Modifier.size(24.dp)
+                            .fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 🔹 Categories Grid
+            //Categories Grid
             when {
                 categoriesResponse != null -> {
                     val categories = categoriesResponse?.data ?: emptyList()
@@ -197,23 +203,23 @@ fun CategoryBox(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true, name = "All Categories Screen")
-@Composable
-fun AllCategoriesScreenPreview() {
-    val navController = rememberNavController()
-
-    // Fake PrefManager (won’t really be used in preview)
-    val fakePrefManager = PrefManager(context = androidx.compose.ui.platform.LocalContext.current)
-
-    // Fake ViewModel (empty object just for preview)
-    val fakeViewModel = object : CategoriesViewModel() {}
-
-    AllCategoriesScreen(
-        navController = navController,
-        viewModel = fakeViewModel,
-        prefManager = fakePrefManager
-    )
-}
+//@Preview(showBackground = true, showSystemUi = true, name = "All Categories Screen")
+//@Composable
+//fun AllCategoriesScreenPreview() {
+//    val navController = rememberNavController()
+//
+//    // Fake PrefManager (won’t really be used in preview)
+//    val fakePrefManager = PrefManager(context = androidx.compose.ui.platform.LocalContext.current)
+//
+//    // Fake ViewModel (empty object just for preview)
+//    val fakeViewModel = object : CategoriesViewModel() {}
+//
+//    AllCategoriesScreen(
+//        navController = navController,
+//        viewModel = fakeViewModel,
+//        prefManager = fakePrefManager
+//    )
+//}
 
 @Preview(showBackground = true, name = "Single Category Box")
 @Composable

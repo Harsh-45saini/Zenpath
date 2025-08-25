@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.zenpath.data.local.PrefManager
 import com.example.zenpath.data.model.CategoriesResponse
 import com.example.zenpath.data.repository.CategoriesRepository
 import retrofit2.Call
@@ -11,7 +12,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 open class CategoriesViewModel(
-    private val repository: CategoriesRepository = CategoriesRepository()
+    private val repository: CategoriesRepository = CategoriesRepository(),
+    private val prefManager: PrefManager
 ) : ViewModel() {
 
     private val _categoriesResponse = MutableLiveData<CategoriesResponse>()
@@ -19,6 +21,15 @@ open class CategoriesViewModel(
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
+
+    init {
+        val token = prefManager.getToken()
+        if (!token.isNullOrBlank()) {
+            fetchAllCategories(token)
+        } else {
+            _error.value = "Token missing"
+        }
+    }
 
     fun fetchAllCategories(token: String) {
         Log.d("CategoriesViewModel", "Fetching categories with token: $token")

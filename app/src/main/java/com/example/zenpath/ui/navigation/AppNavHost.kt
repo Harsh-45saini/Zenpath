@@ -10,16 +10,18 @@ import androidx.navigation.compose.composable
 import com.example.zenpath.ui.splash.SplashScreen
 import com.example.zenpath.AuthScreen
 import com.example.zenpath.data.local.PrefManager
+import com.example.zenpath.data.repository.CategoriesRepository
 import com.example.zenpath.ui.categories.AllCategoriesScreen
+import com.example.zenpath.ui.filtersearch.FilterSearchScreen
 import com.example.zenpath.ui.frowning.FrowningScreen
 import com.example.zenpath.ui.home.HomeScreen
 import com.example.zenpath.ui.listening.ListeningScreen
 import com.example.zenpath.ui.mostpopular.MostPopularScreen
 import com.example.zenpath.ui.profile.ProfileScreen
 import com.example.zenpath.ui.search.SearchScreen
-import com.example.zenpath.ui.searchFilter.SearchFilterScreen
 import com.example.zenpath.ui.settings.SettingScreen
 import com.example.zenpath.ui.viewmodel.CategoriesViewModel
+import com.example.zenpath.ui.viewmodel.CategoriesViewModelFactory
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -50,6 +52,9 @@ fun NavHostController.safeNavigate(
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
+    val context = LocalContext.current
+    val prefManager = remember { PrefManager(context) } // ✅ Only once, reused
+
     NavHost(navController, startDestination = Screen.Splash.route) {
 
         composable(Screen.Splash.route) {
@@ -68,10 +73,20 @@ fun AppNavHost(navController: NavHostController) {
             MostPopularScreen(navController = navController)
         }
 
-        composable(Screen.Categories.route) {
-            val context = LocalContext.current
-            val viewModel: CategoriesViewModel = viewModel()
-            val prefManager = remember { PrefManager(context) }
+        composable(Screen.Categories.route) { backStackEntry ->
+            // Create your repository (replace with your actual implementation)
+            val repository = remember { CategoriesRepository() }
+
+            // Build factory with repository + prefManager
+            val factory = remember {
+                CategoriesViewModelFactory(repository, prefManager)
+            }
+
+            // Use factory when getting ViewModel
+            val viewModel: CategoriesViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                modelClass = CategoriesViewModel::class.java,
+                factory = factory
+            )
 
             AllCategoriesScreen(
                 navController = navController,
@@ -87,6 +102,7 @@ fun AppNavHost(navController: NavHostController) {
                 onPlayPause = { /* Handle play/pause */ }
             )
         }
+
         composable(Screen.Settings.route) {
             SettingScreen(navController = navController)
         }
@@ -107,8 +123,7 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(Screen.SearchResult.route) {
-            SearchFilterScreen(
-                navController = navController)
+            FilterSearchScreen(navController = navController)
         }
     }
 }
