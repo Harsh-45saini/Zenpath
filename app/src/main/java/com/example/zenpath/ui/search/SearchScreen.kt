@@ -115,6 +115,9 @@ fun SearchScreen(navController: NavController) {
                             .offset(y = (-6 ).dp)
                             .padding(bottom = 2.dp)
                             .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                navController.navigate(Screen.SearchResult.route)
+                            }
                             .background(Color(0xFFD0E8FF)),
                         contentAlignment = Alignment.Center
                     ) {
@@ -144,7 +147,6 @@ fun SearchScreen(navController: NavController) {
             }
             }
         }
-
     }
 
 @Composable

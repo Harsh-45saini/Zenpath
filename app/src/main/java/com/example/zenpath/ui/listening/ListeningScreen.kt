@@ -37,7 +37,6 @@ fun ListeningScreen(
             .background(Color.White)
             .padding(horizontal = 18.dp, vertical = 40.dp)
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -228,7 +227,7 @@ fun ListeningScreen(
                                 .background(Color.White, CircleShape)
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.arrow_right), // 🔹 your custom drawable
+                                painter = painterResource(id = R.drawable.btn_play), // 🔹 your custom drawable
                                 contentDescription = "Play",
                                 modifier = Modifier.size(20.dp)
                             )

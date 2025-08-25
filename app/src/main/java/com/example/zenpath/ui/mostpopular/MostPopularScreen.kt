@@ -32,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.yourapp.ui.common.ContinuousSlidingText
 import com.example.zenpath.R
+import com.example.zenpath.data.api.ApiClient
 import com.example.zenpath.ui.navigation.Screen
 import com.example.zenpath.ui.theme.ZenpathTheme
 import com.example.zenpath.ui.viewmodel.MostPopularViewModel
@@ -85,7 +87,6 @@ fun MostPopularScreen(
 fun MostPopular(
     navController: NavController
 ) {
-
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
 
     Row(
@@ -149,6 +150,12 @@ fun MusicCard(
 ) {
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
 
+    val fullImageUrl = if (imageUrl.startsWith("http")) {
+        imageUrl
+    } else {
+        ApiClient.BASE_URL + imageUrl
+    }
+
     Box(
         modifier = Modifier
             .height(180.dp)
@@ -156,14 +163,14 @@ fun MusicCard(
             .clip(RoundedCornerShape(22.dp))
     ) {
         Image(
-            painter = rememberAsyncImagePainter(imageUrl),
+            painter = rememberAsyncImagePainter(fullImageUrl),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
 
         Image(
-            painter = painterResource(id = R.drawable.play_icon), // your play icon
+            painter = painterResource(id = R.drawable.play_icon),
             contentDescription = "Play Button",
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -171,16 +178,18 @@ fun MusicCard(
                 .size(28.dp)
         )
 
-        Text(
-            text = title,
-            color = Color.White,
-            fontFamily = ptSerifFont,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
+        Box(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(14.dp)
-        )
+                .align(Alignment.BottomStart) // stick to bottom
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 8.dp)
+        ) {
+            ContinuousSlidingText(
+                text = title,
+                textColor = Color.White,
+                durationMillis = 6000
+            )
+        }
     }
 }
 

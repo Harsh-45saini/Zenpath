@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.zenpath.R
+import com.example.zenpath.data.api.ApiClient
 import com.example.zenpath.data.local.PrefManager
 
 import com.example.zenpath.ui.viewmodel.CategoriesViewModel
@@ -169,7 +170,12 @@ fun CategoryBox(
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                model = "https://your_base_url.com$iconUrl", // prepend base URL if iconUrl is relative
+               model = if (iconUrl.startsWith("http")) {
+               iconUrl
+               } else {
+               "${ApiClient.BASE_URL}$iconUrl"
+              }
+            ,
                 contentDescription = title,
                 modifier = Modifier.size(40.dp),
                 contentScale = ContentScale.Fit,
@@ -208,7 +214,6 @@ fun AllCategoriesScreenPreview() {
         prefManager = fakePrefManager
     )
 }
-
 
 @Preview(showBackground = true, name = "Single Category Box")
 @Composable

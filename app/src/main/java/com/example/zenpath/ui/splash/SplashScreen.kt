@@ -49,4 +49,5 @@ fun SplashScreen(navController: NavHostController) {
                 .aspectRatio(1f)
         )
     }
+
 }
