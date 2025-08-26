@@ -3,7 +3,6 @@ package com.example.zenpath.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +12,7 @@ import com.example.zenpath.data.local.PrefManager
 import com.example.zenpath.data.repository.CategoriesRepository
 import com.example.zenpath.ui.categories.AllCategoriesScreen
 import com.example.zenpath.ui.filtersearch.FilterSearchScreen
-import com.example.zenpath.ui.frowning.FrowningScreen
+import com.example.zenpath.ui.dailypractice.DailyPracticeScreen
 import com.example.zenpath.ui.home.HomeScreen
 import com.example.zenpath.ui.listening.ListeningScreen
 import com.example.zenpath.ui.mostpopular.MostPopularScreen
@@ -73,6 +72,12 @@ fun AppNavHost(navController: NavHostController) {
             MostPopularScreen(navController = navController)
         }
 
+        composable("dailyPractice/{categoryId}") { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getString("categoryId")?.toIntOrNull() ?: 0
+            DailyPracticeScreen(navController, categoryId = categoryId)
+        }
+
+
         composable(Screen.Categories.route) { backStackEntry ->
             // Create your repository (replace with your actual implementation)
             val repository = remember { CategoriesRepository() }
@@ -119,7 +124,7 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(Screen.Frowning.route) {
-            FrowningScreen(navController = navController)
+            DailyPracticeScreen(navController = navController)
         }
 
         composable(Screen.SearchResult.route) {

@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.zenpath.R
 import com.example.zenpath.data.api.ApiClient
@@ -140,7 +139,10 @@ fun AllCategoriesScreen(
                                 iconUrl = category.icon,
                                 modifier = Modifier
                                     .width(80.dp)
-                                    .wrapContentHeight()
+                                    .wrapContentHeight(),
+                                onClick = {
+                                    navController.navigate("dailyPractice/${category.id}")
+                                }
                             )
                         }
                     }

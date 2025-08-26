@@ -10,6 +10,9 @@
         private var retrofit: Retrofit? = null
         const val BASE_URL = "https://meditation.testingbeta.in"  // <-- Added /api/ and trailing slash
 
+        val apiService: ApiInterface by lazy {
+            getClient().create(ApiInterface::class.java)
+        }
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }

@@ -17,6 +17,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiInterface {
+
     @POST("/api/users/register")
     fun registerUser(@Body request: RegisterRequest): Call<RegisterResponse>
 
@@ -35,13 +36,20 @@ interface ApiInterface {
     @GET("/api/terms-conditions/latest")
     fun getTermsOfService(): Call<TermsAndConditionsResponse>
 
-    @GET("daily-practices/category/{categoryId}")
-    fun getDailyPractices(
+    // Get daily practices by category
+    @GET("/api/daily-practices/category/{categoryId}")
+    fun getDailyPracticesByCategory(
         @Path("categoryId") categoryId: Int
     ): Call<DailyPracticeResponse>
 
-    // Get all
+    // Get all daily practices
     @GET("/api/daily-practices")
     fun getAllDailyPractices(): Call<DailyPracticeResponse>
+
+    // If you have another endpoint that returns multiple practices
+    @GET("/api/daily-practices/category/{id}")
+    fun getDailyPracticesList(
+        @Path("id") categoryId: Int
+    ): Call<DailyPracticeResponse>   // make sure this model actually exists
 
 }

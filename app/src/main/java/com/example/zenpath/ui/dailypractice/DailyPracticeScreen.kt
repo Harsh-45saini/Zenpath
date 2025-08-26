@@ -1,4 +1,4 @@
-package com.example.zenpath.ui.frowning
+package com.example.zenpath.ui.dailypractice
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,9 +28,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.zenpath.R
+import com.example.zenpath.data.api.ApiClient
+import com.example.zenpath.data.repository.DailyPracticeRepository
+import com.example.zenpath.ui.viewmodel.DailyPracticeViewModel
+import com.example.zenpath.ui.viewmodel.DailyPracticeViewModelFactory
 
 @Composable
-fun FrowningScreen(navController: NavController) {
+fun DailyPracticeScreen(
+    navController: NavController,
+    categoryId: Int,
+    viewModel: DailyPracticeViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+        factory = DailyPracticeViewModelFactory(
+            DailyPracticeRepository(
+                ApiClient.apiService
+            )
+        )
+    )
+) {
+    val dailyPractices = viewModel.dailyPractices.value
     val protestStrike = FontFamily(Font(R.font.protest_strike, FontWeight.Light))
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
     val ptSans = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
@@ -71,18 +86,21 @@ fun FrowningScreen(navController: NavController) {
             "Evening Reflection" to "Review your day"
         )
 
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(1),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(dailyPractices) { (title, subtitle) ->
-                DailyPracticeItem(
-                    imageRes = R.drawable.rectangle_9500,
-                    title = title,
-                    subtitle = subtitle
-                )
-            }
+//            dailyPractices?.let { list ->
+//                items(list) { practice ->
+//                    DailyPracticeItem(
+//                        imageUrl = practice.imageUrl, // from API
+//                        title = practice.title,
+//                        subtitle = practice.subtitle
+//                    )
+//                }
+//            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -166,7 +184,11 @@ fun InfoCard() {
 }
 
 @Composable
-fun DailyPracticeItem(imageRes: Int, title: String, subtitle: String) {
+fun DailyPracticeItem(
+    imageUrl: String?, // For remote image (nullable if not available)
+    title: String,
+    subtitle: String
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -184,20 +206,31 @@ fun DailyPracticeItem(imageRes: Int, title: String, subtitle: String) {
                 .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
-            // Background Image
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = "Practice Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (imageUrl != null) {
+                // Load image from URL using Coil
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(R.drawable.rectangle_9500), // fallback image
+                    contentDescription = "Practice Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                // If you have Coil setup, you can use:
+                // AsyncImage(model = imageUrl, contentDescription = title, contentScale = ContentScale.Crop)
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.rectangle_9500),
+                    contentDescription = "Practice Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
             // Play Button Icon at Center
             Image(
-                painter = painterResource(id = R.drawable.play_icon), // replace with your play icon
+                painter = painterResource(id = R.drawable.play_icon),
                 contentDescription = "Play Button",
                 modifier = Modifier
-                    .size(20.dp) // adjust size as needed
+                    .size(20.dp)
                     .align(Alignment.Center)
             )
         }
@@ -289,7 +322,7 @@ fun TopBar(navController: NavController, ptSerifFont: FontFamily) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun FrowningScreenPreview() {
+fun DailyPracticeScreenPreview() {
     val navController = rememberNavController()
-    FrowningScreen(navController = navController)
+    DailyPracticeScreen(navController = navController, categoryId = 1)
 }
