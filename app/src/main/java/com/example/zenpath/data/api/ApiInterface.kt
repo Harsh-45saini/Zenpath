@@ -1,6 +1,7 @@
 package com.example.zenpath.data.api
 
 import com.example.zenpath.data.model.CategoriesResponse
+import com.example.zenpath.data.model.CategoryResponse
 import com.example.zenpath.data.model.DailyPracticeResponse
 import com.example.zenpath.data.model.DashboardResponse
 import com.example.zenpath.data.model.LoginRequest
@@ -39,6 +40,7 @@ interface ApiInterface {
     // Get daily practices by category
     @GET("/api/daily-practices/category/{categoryId}")
     fun getDailyPracticesByCategory(
+        @Header("Authorization") token: String,
         @Path("categoryId") categoryId: Int
     ): Call<DailyPracticeResponse>
 
@@ -46,10 +48,8 @@ interface ApiInterface {
     @GET("/api/daily-practices")
     fun getAllDailyPractices(): Call<DailyPracticeResponse>
 
-    // If you have another endpoint that returns multiple practices
-    @GET("/api/daily-practices/category/{id}")
-    fun getDailyPracticesList(
-        @Path("id") categoryId: Int
-    ): Call<DailyPracticeResponse>   // make sure this model actually exists
-
+    @GET("/api/categories/{id}")
+    fun getCategoryById(@Header("Authorization") token: String,
+                        @Path("id") id: Int)
+    : Call<CategoryResponse>
 }

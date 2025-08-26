@@ -310,8 +310,7 @@ fun GoalButton(text: String) {
 }
 
 
-// All MoodSelector related composables are now here
-// All MoodSelector related composables are now here
+// All MoodSelector related composable are now here
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoodSelector() {

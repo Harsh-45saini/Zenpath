@@ -32,7 +32,9 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile_screen")
     object Search : Screen("search_screen")
     object Listening : Screen("listening_screen")
-    object Frowning : Screen("frowning_screen")
+    object DailyPractice : Screen("dailyPractice/{categoryId}") {
+        fun createRoute(categoryId: Int) = "dailyPractice/$categoryId"
+    }
     object SearchResult : Screen("search_result_screen")
 }
 
@@ -52,7 +54,7 @@ fun NavHostController.safeNavigate(
 @Composable
 fun AppNavHost(navController: NavHostController) {
     val context = LocalContext.current
-    val prefManager = remember { PrefManager(context) } // ✅ Only once, reused
+    val prefManager = remember { PrefManager(context) }
 
     NavHost(navController, startDestination = Screen.Splash.route) {
 
@@ -80,7 +82,7 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(Screen.Categories.route) { backStackEntry ->
             // Create your repository (replace with your actual implementation)
-            val repository = remember { CategoriesRepository() }
+            val repository = remember { CategoriesRepository(context) }
 
             // Build factory with repository + prefManager
             val factory = remember {
@@ -123,8 +125,9 @@ fun AppNavHost(navController: NavHostController) {
             SearchScreen(navController = navController)
         }
 
-        composable(Screen.Frowning.route) {
-            DailyPracticeScreen(navController = navController)
+        composable(Screen.DailyPractice.route) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getString("categoryId")?.toIntOrNull() ?: 0
+            DailyPracticeScreen(navController, categoryId = categoryId)
         }
 
         composable(Screen.SearchResult.route) {

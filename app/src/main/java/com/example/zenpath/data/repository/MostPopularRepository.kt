@@ -23,6 +23,7 @@ class MostPopularRepository(context: Context) {
     }
 
     fun getDailyPracticesByCategory(categoryId: Int): Call<DailyPracticeResponse> {
-        return apiService.getDailyPractices(categoryId)
+        val token = prefManager.getToken() ?: ""
+        return apiService.getDailyPracticesByCategory("Bearer $token", categoryId)
     }
 }

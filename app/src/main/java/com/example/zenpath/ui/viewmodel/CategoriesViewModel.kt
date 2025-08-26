@@ -12,7 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 open class CategoriesViewModel(
-    private val repository: CategoriesRepository = CategoriesRepository(),
+    private val repository: CategoriesRepository,
     private val prefManager: PrefManager
 ) : ViewModel() {
 

@@ -1,17 +1,25 @@
 package com.example.zenpath.data.model
 
+// For list response (/api/categories)
 data class CategoriesResponse(
     val status: Boolean,
     val message: String,
-    val data: List<Categories>
+    val data: List<CategoryDto>
 )
 
-data class Categories(
+// For single category response (/api/categories/{id})
+data class CategoryResponse(
+    val status: Boolean,
+    val message: String,
+    val data: CategoryDto
+)
+
+// Category object itself
+data class CategoryDto(
     val id: Int,
     val name: String,
-    val icon: String, // URL string from API
-    val detail_image: String,
-    val detail_title: String,
-    val detail_description: String
-    // add other fields as needed
+    val icon: String,
+    val detail_image: String? = null,
+    val detail_title: String? = null,
+    val detail_description: String? = null
 )

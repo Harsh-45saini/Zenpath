@@ -1,5 +1,6 @@
 package com.example.zenpath.ui.dailypractice
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,15 +24,24 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.zenpath.R
 import com.example.zenpath.data.api.ApiClient
+import com.example.zenpath.data.local.PrefManager
 import com.example.zenpath.data.repository.DailyPracticeRepository
+import com.example.zenpath.ui.viewmodel.CategoryUiState
+import com.example.zenpath.ui.viewmodel.DailyPracticeUiState
 import com.example.zenpath.ui.viewmodel.DailyPracticeViewModel
 import com.example.zenpath.ui.viewmodel.DailyPracticeViewModelFactory
 
@@ -45,7 +57,22 @@ fun DailyPracticeScreen(
         )
     )
 ) {
-    val dailyPractices = viewModel.dailyPractices.value
+    val context = LocalContext.current
+    val prefManager = remember { PrefManager(context) }
+    val uiState by viewModel.uiState.collectAsState()
+    val categoryState by viewModel.categoryState.collectAsState()
+    val token = prefManager.getToken()
+
+    // 🔹 Trigger API call when screen opens
+    LaunchedEffect(categoryId) {
+        viewModel.fetchCategoryDetails(token , categoryId)
+        viewModel.fetchDailyPractices(token , categoryId)
+    }
+
+    val dailyPractices = when (uiState) {
+        is DailyPracticeUiState.Success -> (uiState as DailyPracticeUiState.Success).data
+        else -> emptyList()
+    }
     val protestStrike = FontFamily(Font(R.font.protest_strike, FontWeight.Light))
     val ptSerifFont = FontFamily(Font(R.font.ptserif_regular, FontWeight.Normal))
     val ptSans = FontFamily(Font(R.font.ptsans_regular, FontWeight.Normal))
@@ -53,10 +80,11 @@ fun DailyPracticeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(colorResource(id = R.color.white))
             .padding(horizontal = 18.dp, vertical = 40.dp)
     ) {
         // 🔹 Top Bar
-        TopBar(navController, ptSerifFont)
+        TopBar(navController, ptSerifFont,categoryState)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -78,48 +106,84 @@ fun DailyPracticeScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔹 Daily Practice Grid (1 column = vertical list)
-        val dailyPractices = listOf(
-            "Morning Meditation" to "Start your day calm",
-            "Gratitude Writing" to "Write 3 things daily",
-            "Mindful Breathing" to "Practice 5 mins",
-            "Evening Reflection" to "Review your day"
-        )
+//        // 🔹 Daily Practice Grid (1 column = vertical list)
+//        val dailyPractices = listOf(
+//            "Morning Meditation" to "Start your day calm",
+//            "Gratitude Writing" to "Write 3 things daily",
+//            "Mindful Breathing" to "Practice 5 mins",
+//            "Evening Reflection" to "Review your day"
+//        )
 
+// 🔹 Daily Practices Section
+        when (uiState) {
+            is DailyPracticeUiState.Loading -> {
+                Text(
+                    "Loading practices...",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    fontSize = 16.sp
+                )
+            }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(1),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-//            dailyPractices?.let { list ->
-//                items(list) { practice ->
-//                    DailyPracticeItem(
-//                        imageUrl = practice.imageUrl, // from API
-//                        title = practice.title,
-//                        subtitle = practice.subtitle
-//                    )
-//                }
-//            }
+            is DailyPracticeUiState.Error -> {
+                Text(
+                    "Error: ${(uiState as DailyPracticeUiState.Error).message}",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    fontSize = 16.sp
+                )
+            }
+
+            is DailyPracticeUiState.Success -> {
+                val dailyPractices = (uiState as DailyPracticeUiState.Success).data
+
+                if (dailyPractices.isEmpty()) {
+                    Text(
+                        "No practices found",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray
+                    )
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(1),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(dailyPractices) { practice ->
+                            val imageUrl = ApiClient.BASE_URL + practice.cover_image
+                            Log.d("DEBUG DailyPractice","DEBUG DailyPractice image: $imageUrl")
+
+                            DailyPracticeItem(
+                                imageUrl = imageUrl,
+                                title = practice.title,
+                                subtitle = practice.description
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp)) // border radius
-                .background(colorResource(id = R.color.blue)) // semi-transparent bg
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(
-                text = "Load More",
-                color = Color.White,
-                fontSize = 16.sp,
-                fontFamily = ptSans,
-                fontWeight = FontWeight.Bold
-            )
-        }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .clip(RoundedCornerShape(12.dp)) // border radius
+//                .background(colorResource(id = R.color.blue)) // semi-transparent bg
+//                .padding(horizontal = 16.dp, vertical = 8.dp)
+//        ) {
+//            Text(
+//                text = "Load More",
+//                color = Color.White,
+//                fontSize = 16.sp,
+//                fontFamily = ptSans,
+//                fontWeight = FontWeight.Bold
+//            )
+//        }
     }
 }
 
@@ -185,7 +249,7 @@ fun InfoCard() {
 
 @Composable
 fun DailyPracticeItem(
-    imageUrl: String?, // For remote image (nullable if not available)
+    imageUrl: String?, // For remote image
     title: String,
     subtitle: String
 ) {
@@ -198,25 +262,26 @@ fun DailyPracticeItem(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 1. Image inside a Box
+        // 🔹 Image Box
         Box(
             modifier = Modifier
-                .size(55.dp)
+                .size(65.dp)
                 .clip(RoundedCornerShape(15.dp))
                 .background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
-            if (imageUrl != null) {
-                // Load image from URL using Coil
-                androidx.compose.foundation.Image(
-                    painter = androidx.compose.ui.res.painterResource(R.drawable.rectangle_9500), // fallback image
+            if (!imageUrl.isNullOrEmpty()) {
+                // ✅ Load from URL with Coil
+                AsyncImage(
+                    model = imageUrl,
                     contentDescription = "Practice Image",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    placeholder = painterResource(R.drawable.rectangle_9500),
+                    error = painterResource(R.drawable.rectangle_9500)
                 )
-                // If you have Coil setup, you can use:
-                // AsyncImage(model = imageUrl, contentDescription = title, contentScale = ContentScale.Crop)
             } else {
+                // 🔹 Fallback if no URL
                 Image(
                     painter = painterResource(id = R.drawable.rectangle_9500),
                     contentDescription = "Practice Image",
@@ -225,7 +290,7 @@ fun DailyPracticeItem(
                 )
             }
 
-            // Play Button Icon at Center
+            // 🔹 Play button overlay
             Image(
                 painter = painterResource(id = R.drawable.play_icon),
                 contentDescription = "Play Button",
@@ -237,24 +302,32 @@ fun DailyPracticeItem(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // 2. Text Column
+        // 🔹 Text Column
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
             Text(
                 text = subtitle,
                 fontSize = 14.sp,
-                color = Color.Gray
+                fontFamily = FontFamily.SansSerif,
+                color = colorResource(id = R.color.blue),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
 }
 
 @Composable
-fun TopBar(navController: NavController, ptSerifFont: FontFamily) {
+fun TopBar(
+    navController: NavController,
+    ptSerifFont: FontFamily,
+    categoryState: CategoryUiState
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -262,7 +335,7 @@ fun TopBar(navController: NavController, ptSerifFont: FontFamily) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Back
+        // 🔹 Back button
         Box(
             modifier = Modifier
                 .size(45.dp)
@@ -279,28 +352,52 @@ fun TopBar(navController: NavController, ptSerifFont: FontFamily) {
             )
         }
 
-        // Title
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.disappointed),
-                contentDescription = "Title Icon",
-                modifier = Modifier
-                    .size(35.dp)
-                    .padding(end = 6.dp),
-            )
-            Text(
-                text = "Frowning",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.blue),
-                fontFamily = ptSerifFont
-            )
+        // 🔹 Title (category)
+        when (categoryState) {
+            is CategoryUiState.Loading -> {
+                Text(
+                    "Loading...",
+                    fontSize = 20.sp,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            is CategoryUiState.Error -> {
+                Text(
+                    "Error: ${categoryState.message}",
+                    color = Color.Red,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            is CategoryUiState.Success -> {
+                val category = categoryState.category
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.weight(1f) // ✅ only takes middle space
+                ) {
+                        AsyncImage(
+                            model = ApiClient.BASE_URL + category.icon,
+                            contentDescription = "Category Icon",
+                            modifier = Modifier
+                                .size(35.dp)
+                                .padding(end = 6.dp)
+                        )
+                    Text(
+                        text = category.name,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.blue),
+                        fontFamily = ptSerifFont
+                    )
+                }
+            }
         }
 
-        // Search
+        // 🔹 Search button
         Box(
             modifier = Modifier
                 .size(45.dp)
